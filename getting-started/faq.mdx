@@ -1,0 +1,102 @@
+---
+title: "FAQ"
+description: "Common questions about Drift CLI"
+---
+
+## General
+
+### Does Drift need internet access?
+
+Yes. Drift's agent sends your prompts to an external API to generate plans and code. Your local files, workspace, and simulation data stay on your machine — only the text of your prompt is sent.
+
+If you're working in an air-gapped environment, Drift will not function. Offline support is not available in the current beta.
+
+### Does Drift work with MoveIt?
+
+Not directly. Drift creates the robot description (URDF), Gazebo world, and launch files, but does not currently configure MoveIt2 motion planning. You can use Drift to scaffold the robot and simulation, then set up MoveIt2 separately on top of the generated workspace.
+
+MoveIt2 integration is on the roadmap.
+
+### Can I use my own URDF files?
+
+You can reference your own URDF in prompts (e.g., "use my existing robot.urdf and add a camera sensor"). Drift will attempt to parse and extend it. However, highly customized or non-standard URDF structures may require manual adjustment. Drift works best when it generates URDF from scratch or when existing files follow standard ROS2 conventions.
+
+### Can I use custom Gazebo plugins?
+
+Drift can configure standard Gazebo Harmonic plugins automatically (cameras, LiDAR, IMU, etc.). For third-party or custom `.so` plugins, mention them explicitly in your prompt — Drift will attempt to add the plugin block to the SDF. You may still need to manually verify the plugin parameters and build paths.
+
+### Does Drift work with ROS1?
+
+No. Drift supports ROS2 only. ROS1 is not on the roadmap.
+
+---
+
+## Installation & Setup
+
+### What ROS2 versions are supported?
+
+**ROS2 Humble (LTS)** and **ROS2 Jazzy** are the recommended and tested distributions.
+
+ROS2 Foxy reached end-of-life in June 2023 and is not supported. It may work in some cases but is not tested and you won't get help for Foxy-specific issues.
+
+### Does Drift work on macOS or Windows?
+
+No. Drift CLI requires Ubuntu 20.04+ (Debian-based Linux) and x86_64 architecture. macOS and Windows are not supported. ARM-based systems (Raspberry Pi, Apple Silicon) are also not currently supported.
+
+### Does Drift work on ARM (Raspberry Pi, Apple Silicon)?
+
+Not yet. Only x86_64 (amd64) is supported in the current beta. ARM support is planned.
+
+---
+
+## Using Drift
+
+### What kinds of prompts work best?
+
+Specific, descriptive prompts work better than short, vague ones. Instead of:
+
+```
+drift> make a robot
+```
+
+Try:
+
+```
+drift> create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a camera mounted on the end-effector
+```
+
+The more detail you provide about the robot type, sensors, world environment, and task, the better the output.
+
+### Can I use Drift with an existing ROS2 workspace?
+
+Drift is designed to create and manage workspaces it generates. Using it with a pre-existing workspace is possible (point Drift at the directory and describe what you want to modify), but results may vary depending on how the workspace is structured. This use case is not fully tested in the current beta.
+
+### What happens if a build fails?
+
+Drift catches build errors and attempts automatic recovery — checking for missing dependencies, fixing common `colcon` issues, and retrying. If the auto-fix fails, Drift will show you the error and suggest next steps. You can also ask:
+
+```
+drift> what went wrong with the last build?
+```
+
+### How do I stop a running simulation?
+
+From the `drift>` prompt:
+
+```
+drift> /ps          # see running processes
+drift> stop gazebo  # ask Drift to stop a specific process
+drift> /exit        # exit Drift (stops managed processes)
+```
+
+---
+
+## Beta & Access
+
+### How do I get access?
+
+Drift CLI is in closed beta. [Sign up at godrift.ai](https://godrift.ai) to request early access.
+
+### How do I report a bug?
+
+Open an issue on the [GitHub Releases repository](https://github.com/godrift-ai/docs/issues), or describe the problem at the `drift>` prompt — the agent can often diagnose issues directly.

@@ -1,0 +1,231 @@
+---
+title: "Quickstart"
+description: "Go from zero to a running robotics simulation in under 5 minutes"
+---
+
+## Before you begin
+
+Make sure you have:
+
+- **ROS2 Humble or Jazzy** installed — [official install guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
+- **Gazebo Sim (Harmonic)** installed — [official install guide](https://gazebosim.org/docs/harmonic/install_ubuntu)
+- An **x86\_64** machine running Ubuntu 20.04+
+
+<Info>
+  The steps below take under 5 minutes once the prerequisites above are in place. Installing ROS2 and Gazebo from scratch takes significantly longer — complete those first before continuing.
+</Info>
+
+### Recommended setup
+
+<Tabs>
+  <Tab title="Ubuntu (Native)">
+    Running Ubuntu natively on an x86\_64 machine is the recommended setup — you'll get the best performance for Gazebo rendering and ROS2.
+
+    **Supported versions:**
+    - Ubuntu 20.04 (Focal)
+    - Ubuntu 22.04 (Jammy) — recommended
+    - Ubuntu 24.04 (Noble)
+
+    Use your system terminal (GNOME Terminal, Konsole, or any terminal emulator) — no additional setup needed.
+  </Tab>
+
+  <Tab title="macOS (via VMware)">
+    Drift runs on Ubuntu only, but macOS users can run it inside a Ubuntu virtual machine using [VMware Fusion](https://www.vmware.com/products/fusion.html).
+
+    **Setup steps:**
+    1. Download and install [VMware Fusion](https://www.vmware.com/products/fusion.html) (free for personal use)
+    2. Create a new VM with **Ubuntu 22.04** (x86\_64 image)
+    3. Allocate at least **8GB RAM** and **4 CPU cores** for Gazebo to run smoothly
+    4. Install ROS2 and Gazebo inside the VM following the official guides
+    5. Follow the Drift install steps below inside the VM terminal
+
+    <Note>
+      Apple Silicon (M1/M2/M3) Macs are not supported. VMware Fusion on Apple Silicon runs an ARM Ubuntu image, which is not compatible with Drift's x86\_64 binary.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Step 1: Install Drift CLI
+
+Run the install script in your terminal:
+
+```bash
+curl -fsSL https://godrift.ai/install | bash
+```
+
+Once complete, restart your terminal or source your shell config:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+Verify the installation:
+
+```bash
+drift --help
+```
+
+You should see:
+
+```
+Get started with:
+  drift --help        Show help
+  drift init          Initialize project
+  drift simulate      Start simulation
+```
+
+<Accordion title="Prefer a manual install?">
+  Download the latest `.deb` package from the [GitHub Releases page](https://github.com/drift-tech/drift-releases/releases) and install it with:
+
+  ```bash
+  sudo dpkg -i drift-cli_1.0.12_amd64.deb
+  ```
+
+  Then run `drift` to start.
+</Accordion>
+
+## Step 2: Launch Drift
+
+Navigate to the directory where you want your project and start Drift:
+
+```bash
+drift
+```
+
+You'll see the Drift welcome screen with an interactive prompt:
+
+```
+🚀 Welcome to Drift CLI
+   (Closed Beta)
+   Your Copilot for robotics simulations
+
+drift>
+```
+
+## Step 3: Build your first simulation
+
+At the `drift>` prompt, describe what you want to build in plain English:
+
+```
+drift> create a pick-and-place robot simulation
+```
+
+Drift plans and executes every step, printing progress as it goes:
+
+```
+✔ Planning simulation layout...
+✔ Creating ROS2 workspace at ~/drift_ws
+✔ Generating robot URDF (manipulator arm + gripper)
+✔ Creating Gazebo world with table and pick objects
+✔ Generating launch files
+⟳ Building workspace with colcon...
+✔ Build complete (0 errors)
+✔ Launch files validated
+
+Ready. Run: launch my robot with the world file
+```
+
+<Note>
+  If a build step fails, Drift automatically diagnoses and retries before surfacing the error to you.
+</Note>
+
+## Step 4: Launch the simulation
+
+Once the build completes, launch everything:
+
+```
+drift> launch my robot with the world file
+```
+
+Gazebo Sim will open in a new window. You should see a ground plane, a table, pick objects, and your robot arm. Back in the terminal, Drift confirms the running processes:
+
+```
+✔ Launched: robot_state_publisher
+✔ Launched: gazebo (Harmonic)
+✔ Launched: joint_state_broadcaster
+All processes running. Use /ps to view details.
+```
+
+## Step 5: Iterate and debug
+
+This is where Drift shines. Keep building on what you have — each change triggers only the necessary rebuilds:
+
+```
+drift> add a lidar sensor to my robot and rebuild
+drift> why isn't my camera publishing images?
+drift> show me the running processes
+```
+
+You don't have to start over. Just describe the next thing you want.
+
+## Pro tips for better results
+
+<AccordionGroup>
+  <Accordion title="Be specific in your prompts">
+    Vague prompts produce generic results. Instead of:
+
+    ```
+    drift> make a robot
+    ```
+
+    Try:
+
+    ```
+    drift> create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a depth camera mounted on the wrist
+    ```
+
+    The more detail you give about the robot type, sensors, environment, and task — the better the output.
+  </Accordion>
+
+  <Accordion title="Let Drift explore before making changes">
+    Before modifying a simulation, ask Drift to inspect what's already there:
+
+    ```
+    drift> what topics are being published?
+    drift> what does my current URDF look like?
+    drift> /ps
+    ```
+
+    This helps Drift make more targeted changes and avoids unnecessary rebuilds.
+  </Accordion>
+
+  <Accordion title="Debug by asking, not by guessing">
+    When something breaks, describe the symptom directly:
+
+    ```
+    drift> why isn't my camera publishing images?
+    drift> what went wrong with the last build?
+    drift> my robot arm isn't moving — what's wrong?
+    ```
+
+    Drift checks your ROS2 topics, logs, URDF config, and process state to give you a diagnosis.
+  </Accordion>
+</AccordionGroup>
+
+## Useful slash commands
+
+| Command | What it does |
+|---------|-------------|
+| `/help` | Show all commands and examples |
+| `/ps` | Show running background processes |
+| `/version` | Check your Drift CLI version |
+| `/update` | Update to the latest version |
+| `/clear` | Clear the terminal |
+| `/exit` | Exit Drift CLI |
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card title="Your First Simulation" icon="play" href="/guides/first-simulation">
+    A detailed walkthrough of building a complete simulation from scratch
+  </Card>
+  <Card title="Commands Reference" icon="terminal" href="/reference/commands">
+    Full list of Drift CLI commands and slash commands
+  </Card>
+</CardGroup>
+
+## Getting help
+
+- **In Drift**: Type `/help` or ask `drift> how do I...`
+- **FAQ**: Check the [FAQ](/getting-started/faq) for common questions
+- **Bugs**: [Open an issue on GitHub](https://github.com/drift-tech/drift-releases/issues)

@@ -1,0 +1,104 @@
+---
+title: "Installation"
+description: "System requirements and how to install Drift CLI"
+---
+
+## System Requirements
+
+Before installing, make sure your system meets the requirements. See the full [System Requirements](/reference/system-requirements) page for details, supported platforms, and dependency installation instructions.
+
+**In brief:** Ubuntu 20.04+, x86_64, ROS2 Humble or Jazzy, Gazebo Sim (Harmonic).
+
+## Quick Install (Recommended)
+
+The fastest way to install Drift CLI:
+
+```bash
+curl -fsSL https://godrift.ai/install | bash
+```
+
+Once installed, restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+You should see:
+
+```
+Get started with:
+  drift --help        Show help
+  drift init          Initialize project
+  drift simulate      Start simulation
+```
+
+## Manual Installation
+
+If you prefer to install manually or the quick install doesn't work for your setup:
+
+1. Download the latest `.deb` package from the [GitHub Releases page](https://github.com/drift-tech/drift-releases/releases)
+
+2. Install with `dpkg`:
+
+```bash
+sudo dpkg -i drift-cli_1.0.12_amd64.deb
+```
+
+3. To start, run:
+
+```bash
+drift
+```
+
+## Updating
+
+Drift CLI detects new versions automatically. When an update is available, you'll see a notification on startup:
+
+```
+ℹ️ A new version (x.x.x) is available. Type /update to install.
+```
+
+To update, simply run inside the Drift prompt:
+
+```
+drift> /update
+```
+
+Or manually download and install the latest `.deb` from [Releases](https://github.com/drift-tech/drift-releases/releases).
+
+## Troubleshooting
+
+### "Command not found: drift"
+
+Your shell hasn't picked up the new binary yet. Restart your terminal or run:
+
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+### Update fails
+
+Manually download the latest `.deb` package from the [releases page](https://github.com/drift-tech/drift-releases/releases) and install it with `dpkg`.
+
+### Permission denied errors
+
+The installer may need `sudo` access. Make sure you have the proper permissions on your system.
+
+## Uninstalling
+
+To remove Drift CLI:
+
+```bash
+sudo dpkg -r drift-cli
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
+    Install complete? Jump into the quickstart to build your first simulation.
+  </Card>
+  <Card title="Commands Reference" icon="terminal" href="/reference/commands">
+    Learn what `drift init` and `drift simulate` do and when to use them.
+  </Card>
+</CardGroup>
