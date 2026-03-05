@@ -1,0 +1,155 @@
+---
+title: "Commands Reference"
+description: "Complete reference for Drift CLI commands and slash commands"
+---
+
+Drift CLI accepts two types of input: **natural language prompts** and **slash commands**. Natural language prompts are interpreted by the AI Agent. Slash commands execute immediately without AI processing.
+
+## Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/help` | Show comprehensive help with all commands and usage examples |
+| `/version` | Display the current Drift CLI version |
+| `/update` | Update Drift CLI to the latest available version |
+| `/ps` | Show all running background processes (ROS2 nodes, Gazebo, etc.) |
+| `/clear` | Clear the terminal screen |
+| `/exit` | Exit Drift CLI |
+
+## CLI Flags
+
+These flags are used when launching Drift from your shell (not from the `drift>` prompt):
+
+| Flag | Description |
+|------|-------------|
+| `drift --help` | Show help information |
+| `drift init` | Initialize a new Drift project in the current directory |
+| `drift simulate` | Start a simulation directly (skips the interactive prompt) |
+| `drift -c "<prompt>"` | Run a single prompt non-interactively and exit |
+
+### `drift init`
+
+Run `drift init` in an empty directory to scaffold a new project. Drift will set up the workspace structure it expects — including ROS2 package layout and configuration — so that subsequent prompts inside the `drift>` shell have a clean starting point.
+
+Use this when you want to start a project in a specific directory rather than letting Drift create the workspace from the first prompt.
+
+```bash
+mkdir my-robot && cd my-robot
+drift init
+drift  # open the interactive shell in the initialized project
+```
+
+### `drift simulate`
+
+Run `drift simulate` to launch a simulation from the command line without entering the interactive `drift>` shell. This is useful for scripting or CI scenarios where you want to start a pre-built simulation non-interactively.
+
+```bash
+drift simulate
+```
+
+If no project is found in the current directory, Drift will prompt you to run `drift init` first.
+
+### `drift -c "<prompt>"`
+
+Run a single prompt non-interactively — Drift executes the task, auto-approves all steps, and exits cleanly when done. Useful for CI pipelines, batch testing, or quick one-offs from a script.
+
+```bash
+drift -c "create a ROS2 package called sensor_fusion with ament_python build type"
+drift -c "add a lidar to my robot's URDF at position 0 0 0.3"
+drift -c "build the workspace and run the tests"
+```
+
+## Natural Language Commands
+
+At the `drift>` prompt, you can type any request in plain English. Here are the main categories:
+
+### Create
+
+| Example | What it does |
+|---------|-------------|
+| `create a differential drive robot with a lidar and camera` | Generates URDF with wheel geometry, sensor mounts, Gazebo plugins, and launch files |
+| `create a six-axis manipulator with a gripper` | Scaffolds full robot description with controller configs and launch files |
+| `create a warehouse environment` | Generates a Gazebo world file with warehouse objects |
+| `setup a pick-and-place simulation` | Creates a complete simulation with robot, world, and launch files |
+
+### Modify
+
+| Example | What it does |
+|---------|-------------|
+| `add a lidar sensor to my robot at position 0 0 0.3 and rebuild` | Updates URDF, configures Gazebo plugin, rebuilds workspace |
+| `add an IMU sensor and update the launch file to bridge the IMU topic` | Edits URDF, bridge config, and launch file in one coordinated change |
+| `change the gripper to a suction cup` | Updates the robot's end effector configuration |
+| `add obstacles to my world` | Modifies the Gazebo world file |
+
+### Launch
+
+| Example | What it does |
+|---------|-------------|
+| `launch my robot in Gazebo with the warehouse world and open RViz` | Starts Gazebo, spawns robot, opens RViz with the right config, bridges topics |
+| `create a launch file that starts Gazebo, spawns my robot, and bridges cmd_vel and odom` | Generates a correct Python launch file with TimerAction for spawn and ros_gz_bridge |
+
+### Inspect
+
+| Example | What it does |
+|---------|-------------|
+| `what topics is my robot publishing?` | Lists all active ROS2 topics |
+| `echo the lidar scan data` | Streams live output from the specified topic |
+| `set the max_velocity parameter on the navigation node to 1.5` | Sets a ROS2 node parameter directly |
+| `run ros2 doctor` | Checks your ROS2 environment for common issues |
+
+### Build
+
+| Example | What it does |
+|---------|-------------|
+| `build my workspace and fix any errors` | Runs colcon, reads errors, edits CMakeLists.txt / package.xml / setup.py as needed |
+| `what went wrong with the last build?` | Analyzes build output and explains the root cause |
+| `find all launch files in my workspace` | Searches across packages and lists matching files |
+
+### Debug
+
+| Example | What it does |
+|---------|-------------|
+| `why is my robot not moving when I publish to cmd_vel?` | Checks topic connections, QoS compatibility, and controller chain |
+| `why isn't my camera publishing images?` | Inspects topic list, sensor config, and Gazebo plugin setup |
+| `my robot spawns but falls through the ground — fix it` | Validates URDF inertia tensors and collision geometry |
+
+## Quick Reference
+
+| What you need | What to say |
+|---------------|-------------|
+| New robot project | `create a mobile robot with differential drive and a depth camera` |
+| Fix a broken build | `build my workspace and fix the errors` |
+| Debug simulation | `my robot spawns but doesn't move — figure out why` |
+| Sensor setup | `add a 2D lidar to my robot and bridge it to ROS2` |
+| Launch configuration | `generate a launch file for my robot in Gazebo with RViz` |
+| ROS2 inspection | `list all active topics and show me what /camera/image_raw is publishing` |
+| Parameter tuning | `set the PID gains on the left wheel controller to P=10 I=0.1 D=0.5` |
+| File operations | `find all launch files in my workspace and show me which ones use Gazebo` |
+| Quick automation | `drift -c "create a test world with 10 random obstacles"` |
+
+## Execution Control
+
+### Pausing mid-execution
+
+Press **`ESC`** at any point during a multi-step execution to pause. Drift remembers exactly what's been completed and what's still pending — nothing is lost.
+
+When paused, you'll be prompted to choose how to proceed:
+
+| Option | What it does |
+|--------|-------------|
+| **Approve this step** | Run the next pending command and pause again |
+| **Approve all (this task)** | Continue without interruption until the current task is done |
+| **Approve all (session)** | Run everything for the rest of the session without asking |
+| **Cancel** | Stop execution and return to the `drift>` prompt |
+
+This gives you full control over how much autonomy Drift has — step through carefully when trying something new, or let it run freely once you're confident.
+
+## Auto-Update
+
+When a new version is available, Drift shows a notification on startup:
+
+```
+ℹ️ A new version (x.x.x) is available. Type /update to install.
+```
+
+Run `/update` to install the latest version.
