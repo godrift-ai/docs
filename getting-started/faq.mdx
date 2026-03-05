@@ -41,11 +41,15 @@ ROS2 Foxy reached end-of-life in June 2023 and is not supported. It may work in 
 
 ### Does Drift work on macOS or Windows?
 
-No. Drift CLI requires Ubuntu 20.04+ (Debian-based Linux) and x86_64 architecture. macOS and Windows are not supported. ARM-based systems (Raspberry Pi, Apple Silicon) are also not currently supported.
+Not natively. Drift CLI requires Ubuntu 20.04+ (Debian-based Linux). macOS users can run Drift inside a Ubuntu virtual machine using VMware Fusion — see the [Quickstart](/getting-started/quickstart) for setup steps. Windows is not supported.
 
-### Does Drift work on ARM (Raspberry Pi, Apple Silicon)?
+### Does Drift work on Apple Silicon (M1/M2/M3)?
 
-Not yet. Only x86_64 (amd64) is supported in the current beta. ARM support is planned.
+Yes, via VMware Fusion. When creating the VM, select an **x86_64 Ubuntu image** (not ARM) so Drift's binary is compatible. Raspberry Pi and other ARM devices are not supported.
+
+### Does Drift work on ARM (Raspberry Pi)?
+
+Not yet. Only x86_64 (amd64) is supported. Raspberry Pi and other ARM devices are not currently supported.
 
 ---
 
