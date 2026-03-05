@@ -1,0 +1,55 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Drift",
+  "theme": "mint",
+  "logo": {
+    "dark": "/assets/logo.jpg",
+    "light": "/assets/logo.jpg"
+  },
+  "favicon": "/assets/favicon.jpg",
+  "colors": {
+    "primary": "#6B0042",
+    "light": "#9B2060",
+    "dark": "#3D0025"
+  },
+  "topbarLinks": [
+    {
+      "name": "Website",
+      "url": "https://godrift.ai"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Early Access",
+    "url": "https://godrift.ai"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "getting-started/introduction",
+          "getting-started/quickstart",
+          "getting-started/faq"
+        ]
+      },
+      {
+        "group": "Guides",
+        "pages": [
+          "guides/first-simulation"
+        ]
+      },
+      {
+        "group": "Reference",
+        "pages": [
+          "reference/commands",
+          "reference/system-requirements",
+          "reference/changelog"
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "github": "https://github.com/drift-tech/drift-releases",
+    "website": "https://godrift.ai"
+  }
+}
