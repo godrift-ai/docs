@@ -1,12 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Drift",
+  "description": "Drift is the AI copilot built for robotics development. Build, test, and debug ROS2 simulations in Gazebo through plain English prompts — no manual URDF editing, no hand-written launch files.",
   "theme": "mint",
   "logo": {
     "dark": "/assets/logo.jpg",
     "light": "/assets/logo.jpg"
   },
-  "favicon": "/assets/favicon.jpg",
+  "favicon": "/assets/logo.jpg",
   "colors": {
     "primary": "#6B0042",
     "light": "#9B2060",
@@ -29,7 +30,8 @@
         "pages": [
           "getting-started/introduction",
           "getting-started/quickstart",
-          "getting-started/faq"
+          "getting-started/faq",
+          "getting-started/support"
         ]
       },
       {
@@ -48,8 +50,23 @@
       }
     ]
   },
-  "footerSocials": {
-    "github": "https://github.com/drift-tech/drift-releases",
-    "website": "https://godrift.ai"
+  "footer": {
+    "socials": {
+      "x": "https://x.com/godrift_ai",
+      "linkedin": "https://www.linkedin.com/company/drifthq/",
+      "github": "https://github.com/godrift-ai/docs",
+      "discord": "https://discord.gg/V7eUCvpb"
+    }
+  },
+  "metadata": {
+    "og:title": "Drift — AI Copilot for Robotics Development",
+    "og:description": "Build, test, and debug ROS2 simulations in Gazebo through plain English prompts. Drift is the AI-native copilot purpose-built for robotics engineers, researchers, and students.",
+    "og:image": "https://docs.godrift.ai/assets/logo.jpg",
+    "og:site_name": "Drift Docs",
+    "og:type": "website",
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Drift — AI Copilot for Robotics Development",
+    "twitter:description": "Build, test, and debug ROS2 simulations in Gazebo through plain English. Drift handles URDF, Gazebo, colcon, and ROS2 — you just describe what you want.",
+    "keywords": "robotics AI copilot, ROS2 assistant, Gazebo simulation tool, robotics development tool, AI robotics agent, ROS2 copilot, robotics simulation AI, autonomous robotics development"
   }
 }
