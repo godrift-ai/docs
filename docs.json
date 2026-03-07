@@ -4,8 +4,8 @@
   "description": "Drift is the AI copilot built for robotics development. Build, test, and debug ROS2 simulations in Gazebo through plain English prompts — no manual URDF editing, no hand-written launch files.",
   "theme": "mint",
   "logo": {
-    "dark": "/assets/logo.jpg",
-    "light": "/assets/logo.jpg"
+    "dark": "/assets/logo-dark.svg",
+    "light": "/assets/logo-light.svg"
   },
   "favicon": "/assets/logo.jpg",
   "colors": {
