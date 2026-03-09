@@ -1,0 +1,313 @@
+---
+title: "Troubleshooting"
+description: "Diagnose and fix common Drift CLI issues, from installation to simulation."
+---
+
+## Quick Health Checks
+
+Run these first to rule out the basics:
+
+| Check | Command | Expected |
+|-------|---------|----------|
+| Drift installed? | `drift --version` | Prints version number |
+| Internet working? | Drift starts without `INTERNET_CONNECTION` error | Drift is configured to start |
+| ROS2 sourced? | `echo $ROS_DISTRO` | Prints distro name (e.g., `humble`, `jazzy`) |
+| Gazebo installed? | `gz sim --version` | Prints Gazebo version (e.g., `8.x` for Harmonic) |
+
+---
+
+## Installation Issues
+
+<AccordionGroup>
+  <Accordion title='"command not found: drift"'>
+    ```bash
+    # Re-install the .deb package
+    sudo dpkg -i drift-cli_*.deb
+
+    # Or manually create the symlink
+    sudo ln -sf /opt/drift/drift /usr/local/bin/drift
+    ```
+  </Accordion>
+
+  <Accordion title="Drift auto-uninstalled itself">
+    Your version was flagged for forced removal (known broken version). Re-install the latest:
+
+    ```bash
+    curl -fsSL https://godrift.ai/install | bash
+    ```
+  </Accordion>
+
+  <Accordion title="Update available / Mandatory update required">
+    When Drift notifies you of a new version, update from inside Drift:
+
+    ```drift
+    /update
+    ```
+
+    Or re-install manually:
+
+    ```bash
+    curl -fsSL https://godrift.ai/install | bash
+    ```
+
+    If you see **"Mandatory update required"**, your version is too old to work with current services. Run `/update` or re-install the latest `.deb`.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Authentication Issues
+
+<AccordionGroup>
+  <Accordion title="How login works">
+    1. Run `drift` — it shows a Google Sign-In URL
+    2. Open the URL in your browser
+    3. Complete Google Sign-In
+    4. Drift automatically detects success
+  </Accordion>
+
+  <Accordion title='"Authentication required"'>
+    You need to log in. Run `drift` and follow the login prompt, or type `/login` in interactive mode.
+  </Accordion>
+
+  <Accordion title="Login link does not open or does not work">
+    - Copy-paste the full URL manually into your browser
+    - Make sure your browser is not blocking pop-ups
+    - Check that you have internet connectivity
+  </Accordion>
+
+  <Accordion title="Login times out">
+    Drift waits up to 5 minutes for login to complete. If it times out, check your internet connection and try again.
+  </Accordion>
+
+  <Accordion title="Waitlisted">
+    You are on the waitlist. Contact the Drift team at [support@godrift.ai](mailto:support@godrift.ai) for access.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Startup and Configuration Issues
+
+<AccordionGroup>
+  <Accordion title='"Maintenance mode"'>
+    Drift services are temporarily down for maintenance. Wait a few minutes and try again.
+  </Accordion>
+
+  <Accordion title="Slow startup (more than 5-8 seconds)">
+    Check your internet connection.
+  </Accordion>
+
+  <Accordion title="Stuck while running">
+    Update Drift by running `/update` inside Drift. If the issue persists, re-install:
+
+    ```bash
+    curl -fsSL https://godrift.ai/install | bash
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Command Execution Issues
+
+<AccordionGroup>
+  <Accordion title='"Tool not valid!"'>
+    Drift requested a tool that does not exist. This usually self-corrects on the next step. If it keeps happening, [report it as a bug](https://github.com/drift-tech/drift-releases/issues).
+  </Accordion>
+
+  <Accordion title="Command timeouts">
+    - **Default timeout:** 30 seconds
+    - **Build commands:** 5 minutes
+    - **GUI apps (Gazebo, RViz, joint_state_publisher_gui):** Timeouts are **expected** — these apps run indefinitely. A timeout here means the app launched successfully.
+  </Accordion>
+
+  <Accordion title="Permission denied">
+    ```bash
+    # Check permissions on the target path
+    ls -la /path/to/file
+
+    # Drift normally works in user-writable directories.
+    # For system directories, you may need sudo.
+    ```
+  </Accordion>
+
+  <Accordion title='"Command validation failed"'>
+    Drift analyzed the command output and found semantic errors (e.g., build failures that returned exit code 0). Read the `issues` list in the output for specifics.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## ROS2 Workspace and Build Issues
+
+<AccordionGroup>
+  <Accordion title='"No src/ directory found"'>
+    Drift cannot find your ROS2 workspace root. Make sure you are running Drift from within or near your ROS2 workspace (the directory that contains `src/`).
+  </Accordion>
+
+  <Accordion title='"Package not found" at build time'>
+    Drift can install missing packages automatically, or you can install them yourself:
+
+    ```bash
+    rosdep install --from-paths src --ignore-src -y
+
+    source /opt/ros/$ROS_DISTRO/setup.bash
+
+    colcon build
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Gazebo and Simulation Issues
+
+<AccordionGroup>
+  <Accordion title='"No Gazebo installation found"'>
+    Neither `gz` nor `gazebo` commands were found. Install Gazebo:
+
+    ```bash
+    sudo apt install ros-$ROS_DISTRO-ros-gz
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Planning Issues
+
+<AccordionGroup>
+  <Accordion title="Stuck in a loop (repeating failed steps)">
+    Press **ESC** to pause execution, then provide corrective instructions:
+
+    ```drift
+    the build is failing because of X, try Y instead
+    skip the build and just create the file
+    ```
+  </Accordion>
+
+  <Accordion title="Incorrect filenames">
+    Drift has launch file validation that catches most cases. If Drift gets stuck finding a file, tell it explicitly:
+
+    ```drift
+    use the file named X that you created earlier
+    ```
+  </Accordion>
+
+  <Accordion title='"Usage limit exceeded"'>
+    You have hit the usage limit. Wait a few minutes and try again, or check your account at [platform.godrift.ai](https://platform.godrift.ai).
+  </Accordion>
+
+  <Accordion title="Too many steps (max 20)">
+    Drift limits execution to 20 steps per run. Break your goal into phases:
+
+    ```drift
+    create the workspace and package structure
+    ```
+    ```drift
+    add the URDF and launch files
+    ```
+    ```drift
+    build and launch in Gazebo
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## File Operation Issues
+
+<AccordionGroup>
+  <Accordion title='"File too large"'>
+    Ask Drift explicitly:
+
+    ```drift
+    create the basic structure first, then add details in follow-up steps
+    ```
+  </Accordion>
+
+  <Accordion title="Edit file fails">
+    If edits do not apply cleanly (e.g., the file changed between steps), the step fails. Drift usually retries with a smaller, more targeted edit automatically.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Process Management Issues
+
+<AccordionGroup>
+  <Accordion title="Gazebo or RViz still running after Drift exited">
+    Drift attempts to clean up background processes on exit, but some may persist:
+
+    ```bash
+    pkill -f 'gz sim'
+    pkill -f rviz2
+    pkill -f joint_state_publisher_gui
+    ```
+  </Accordion>
+
+  <Accordion title='"Process killed by signal"'>
+    Check the stderr output for details. Common causes:
+
+    - **SIGSEGV** — Crash (segmentation fault), usually a Gazebo plugin issue
+    - **SIGPIPE** — Broken pipe, process lost its output stream
+    - **SIGKILL** — OOM killer terminated the process (out of memory)
+  </Accordion>
+
+  <Accordion title='Background process shows "Completed" but no useful output'>
+    This happens when you launch in background mode and the process fails immediately. The error details are lost.
+
+    For first-time launches, use foreground mode to capture errors:
+
+    ```drift
+    launch it in foreground with a 30-second timeout so I can see any errors
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Nuclear Options
+
+When nothing else works, try these reset steps:
+
+```bash
+# 1. Kill all Drift-related processes
+pkill -f drift
+pkill -f 'gz sim'
+pkill -f rviz2
+pkill -f joint_state_publisher_gui
+
+# 2. Re-install Drift CLI
+curl -fsSL https://godrift.ai/install | bash
+
+# 3. Clean and rebuild your ROS2 workspace
+cd your_workspace/
+rm -rf build/ install/ log/
+source /opt/ros/$ROS_DISTRO/setup.bash
+rosdep install --from-paths src --ignore-src -y
+colcon build
+
+# 4. Re-login
+drift
+```
+
+---
+
+## Still Stuck?
+
+Include the following when reaching out:
+
+- Output of `drift --version`
+- Your Ubuntu, ROS2, and Gazebo versions
+- What you were trying to do and what happened
+
+<CardGroup cols={2}>
+  <Card title="Email Support" icon="envelope" href="mailto:support@godrift.ai">
+    support@godrift.ai
+  </Card>
+  <Card title="Discord" icon="discord" href="https://discord.gg/V7eUCvpb">
+    Raise a ticket in our Discord server
+  </Card>
+</CardGroup>

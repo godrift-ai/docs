@@ -45,6 +45,7 @@
         "pages": [
           "reference/commands",
           "reference/system-requirements",
+          "reference/troubleshooting",
           "reference/changelog"
         ]
       }
@@ -58,6 +59,7 @@
       "discord": "https://discord.gg/V7eUCvpb"
     }
   },
+  "customCss": ["/style.css"],
   "metadata": {
     "og:title": "Drift — AI Copilot for Robotics Development",
     "og:description": "Build, test, and debug ROS2 simulations in Gazebo through plain English prompts. Drift is the AI-native copilot purpose-built for robotics engineers, researchers, and students.",

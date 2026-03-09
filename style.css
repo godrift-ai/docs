@@ -1,1 +1,25 @@
-/* Custom styles */
+/* Strip Shiki VS Code colors — use brand palette instead */
+
+/* Remove all per-token colors */
+.shiki span {
+  color: inherit !important;
+}
+
+/* Light mode code blocks — brand maroon */
+.shiki,
+[data-theme="light"] .shiki {
+  color: #6B0042 !important;
+}
+
+/* Dark mode code blocks — white */
+[data-theme="dark"] .shiki {
+  color: #ffffff !important;
+}
+
+/* drift> prompt prefix — visible but not copyable */
+pre[data-language="drift"] .line::before {
+  content: "drift> ";
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0.5;
+}
