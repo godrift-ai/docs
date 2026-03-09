@@ -3,7 +3,7 @@ title: "Introduction"
 description: "Drift is your AI copilot for building, testing, and debugging robotics simulations. Just come with prompts, we handle the rest."
 ---
 
-Drift is your AI copilot for robotics development. Building, testing, and debugging robot simulations has always required deep expertise across ROS2, Gazebo, URDF, and more — Drift removes that barrier entirely. Describe what you want in plain English, and Drift handles all the complexity behind the scenes.
+Drift is your AI copilot for robotics development. Building, testing, and debugging robot simulations has always required deep expertise across ROS2, Gazebo, URDF, and more- Drift removes that barrier entirely. Describe what you want in plain English, and Drift handles all the complexity behind the scenes.
 
 From setting up a workspace to launching a full simulation environment, you just come with prompts, for example:
 
@@ -25,7 +25,7 @@ From setting up a workspace to launching a full simulation environment, you just
 
 ## How It Works
 
-Drift runs as an interactive CLI agent on your local machine. When you type a prompt, the agent interprets your request, generates the necessary ROS2 packages, URDF/SDF files, and launch files, invokes `colcon` to build the workspace, and manages Gazebo processes — all without you touching a config file.
+Drift runs as an interactive CLI agent on your local machine. When you type a prompt, the agent interprets your request, generates the necessary ROS2 packages, URDF/SDF files, and launch files, invokes `colcon` to build the workspace, and manages Gazebo processes - all without you touching a config file.
 
 1. **You describe** what you want in plain English at the `drift>` prompt.
 2. **Drift plans** the steps needed: workspace layout, robot description, world file, launch configuration.
@@ -42,13 +42,13 @@ Drift eliminates that friction. You stay focused on building robots. Drift handl
 
 ## Key Capabilities
 
-**Project scaffolding from a single prompt**-  Describe the robot you need and Drift generates the full project: URDF with correct inertia and collision geometry, ROS2 package structure, Gazebo plugins, controller configs, and launch files. Not templates — working, buildable code from a description.
+**Project scaffolding from a single prompt**-  Describe the robot you need and Drift generates the full project: URDF with correct inertia and collision geometry, ROS2 package structure, Gazebo plugins, controller configs, and launch files. Not templates - working, buildable code from a description.
 
-**Full simulation stack management**- Drift launches Gazebo, spawns your robot, opens RViz with the right config, and bridges all topics in one command. It tracks every background process, so you're not juggling terminals or hunting for zombie `gzserver` instances. Auto-detects your Gazebo version (Classic, Harmonic, Ionic).
+**Full simulation stack management**- Drift launches Gazebo, spawns your robot, opens RViz with the right config, and bridges all topics in one command. It tracks every background process, so you're not juggling terminals or hunting for zombie `gzserver` instances.
 
-**Debugging and live ROS2 inspection**- Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to 23 ROS2 tools — list nodes, echo topics, call services, get and set parameters — all through natural language.
+**Debugging and live ROS2 inspection**- Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to 23 ROS2 tools - list nodes, echo topics, call services, get and set parameters - all through natural language.
 
-**Build error recovery**- Drift reads `colcon` output, finds the root cause, and fixes it- whether that's `CMakeLists.txt`, `package.xml`, `setup.py`, or a missing dependency. When you add a sensor, it updates the URDF, bridge config, and launch file together — changes stay consistent across files.
+**Build error recovery**- Drift reads `colcon` output, finds the root cause, and fixes it- whether that's `CMakeLists.txt`, `package.xml`, `setup.py`, or a missing dependency. When you add a sensor, it updates the URDF, bridge config, and launch file together - changes stay consistent across files.
 
 **You stay in control**- Every command is shown before it runs. Press `ESC` to pause mid-execution and step through one command at a time, or let Drift run the full task uninterrupted. Use `drift -c` for CI pipelines and scripted workflows.
 

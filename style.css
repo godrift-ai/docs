@@ -17,7 +17,7 @@
 }
 
 /* drift> prompt prefix — visible but not copyable */
-pre[data-language="drift"] .line::before {
+pre[language="drift"] .line::before {
   content: "drift> ";
   user-select: none;
   -webkit-user-select: none;

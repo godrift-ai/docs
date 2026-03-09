@@ -60,7 +60,7 @@ Run these first to rule out the basics:
 
 <AccordionGroup>
   <Accordion title="How login works">
-    1. Run `drift` — it shows a Google Sign-In URL
+    1. Run `drift` - it shows a Google Sign-In URL
     2. Open the URL in your browser
     3. Complete Google Sign-In
     4. Drift automatically detects success
@@ -80,9 +80,6 @@ Run these first to rule out the basics:
     Drift waits up to 5 minutes for login to complete. If it times out, check your internet connection and try again.
   </Accordion>
 
-  <Accordion title="Waitlisted">
-    You are on the waitlist. Contact the Drift team at [support@godrift.ai](mailto:support@godrift.ai) for access.
-  </Accordion>
 </AccordionGroup>
 
 ---
@@ -119,7 +116,7 @@ Run these first to rule out the basics:
   <Accordion title="Command timeouts">
     - **Default timeout:** 30 seconds
     - **Build commands:** 5 minutes
-    - **GUI apps (Gazebo, RViz, joint_state_publisher_gui):** Timeouts are **expected** — these apps run indefinitely. A timeout here means the app launched successfully.
+    - **GUI apps (Gazebo, RViz, joint_state_publisher_gui):** Timeouts are **expected** - these apps run indefinitely. A timeout here means the app launched successfully.
   </Accordion>
 
   <Accordion title="Permission denied">
@@ -250,9 +247,9 @@ Run these first to rule out the basics:
   <Accordion title='"Process killed by signal"'>
     Check the stderr output for details. Common causes:
 
-    - **SIGSEGV** — Crash (segmentation fault), usually a Gazebo plugin issue
-    - **SIGPIPE** — Broken pipe, process lost its output stream
-    - **SIGKILL** — OOM killer terminated the process (out of memory)
+    - **SIGSEGV** : Crash (segmentation fault), usually a Gazebo plugin issue
+    - **SIGPIPE** : Broken pipe, process lost its output stream
+    - **SIGKILL** : OOM killer terminated the process (out of memory)
   </Accordion>
 
   <Accordion title='Background process shows "Completed" but no useful output'>
