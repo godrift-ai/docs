@@ -11,7 +11,7 @@ Make sure you've completed the [Quickstart](/getting-started/quickstart) setup b
 
 ## Step 1: Start Drift
 
-Open your terminal and launch Drift:
+Open your terminal (or the integrated terminal in VS Code or Cursor) and launch Drift:
 
 ```bash
 drift
@@ -23,8 +23,8 @@ You'll see the Drift welcome screen with the interactive `drift>` prompt.
 
 Tell Drift what robot you want:
 
-```
-drift> create a pick-and-place robot simulation
+```drift
+create a pick-and-place robot simulation
 ```
 
 Drift will plan and execute the following:
@@ -41,8 +41,8 @@ Watch the output as Drift works through each step. If any step fails (e.g., a mi
 
 Once the build completes, launch everything:
 
-```
-drift> launch my robot with the world file
+```drift
+launch my robot with the world file
 ```
 
 Gazebo Sim will open showing your simulation environment. You should see:
@@ -56,9 +56,9 @@ Gazebo Sim will open showing your simulation environment. You should see:
 
 With the simulation running, you can inspect what's happening:
 
-```
-drift> what topics are being published?
-drift> /ps
+```drift
+what topics are being published?
+/ps
 ```
 
 The `/ps` command shows all running processes — your ROS2 nodes, the Gazebo instance, and any controllers.
@@ -67,8 +67,8 @@ The `/ps` command shows all running processes — your ROS2 nodes, the Gazebo in
 
 Let's add a camera to the robot so it can see what it's picking up:
 
-```
-drift> add a camera sensor to my robot and rebuild
+```drift
+add a camera sensor to my robot and rebuild
 ```
 
 Drift will:
@@ -81,8 +81,8 @@ Drift will:
 
 If something isn't working — say the camera isn't publishing images — ask Drift:
 
-```
-drift> why isn't my camera publishing images?
+```drift
+why isn't my camera publishing images?
 ```
 
 The Agent will check the ROS2 topic list, inspect the sensor configuration, and give you a diagnosis with a suggested fix.
@@ -91,11 +91,11 @@ The Agent will check the ROS2 topic list, inspect the sensor configuration, and 
 
 This is where Drift shines. Keep building on what you have:
 
-```
-drift> add a lidar sensor to the base
-drift> add more objects to the table
-drift> change the gripper to a suction cup
-drift> increase the arm reach
+```drift
+add a lidar sensor to the base
+add more objects to the table
+change the gripper to a suction cup
+increase the arm reach
 ```
 
 Each change triggers only the necessary rebuilds. You don't have to restart from scratch.

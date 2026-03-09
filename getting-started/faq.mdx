@@ -51,6 +51,10 @@ Yes, via VMware Fusion. When creating the VM, select an **x86_64 Ubuntu image** 
 
 Not yet. Only x86_64 (amd64) is supported. Raspberry Pi and other ARM devices are not currently supported.
 
+### Can I use Drift in VS Code or Cursor?
+
+Yes. Drift CLI runs in any terminal, including the integrated terminal in VS Code or Cursor. Open the integrated terminal (View → Terminal or `` Ctrl+` ``) and run `drift` as you would in a system terminal. No additional setup is required.
+
 ---
 
 ## Using Drift
@@ -59,14 +63,14 @@ Not yet. Only x86_64 (amd64) is supported. Raspberry Pi and other ARM devices ar
 
 Specific, descriptive prompts work better than short, vague ones. Instead of:
 
-```
-drift> make a robot
+```drift
+make a robot
 ```
 
 Try:
 
-```
-drift> create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a camera mounted on the end-effector
+```drift
+create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a camera mounted on the end-effector
 ```
 
 The more detail you provide about the robot type, sensors, world environment, and task, the better the output.
@@ -79,18 +83,18 @@ Drift is designed to create and manage workspaces it generates. Using it with a 
 
 Drift catches build errors and attempts automatic recovery — checking for missing dependencies, fixing common `colcon` issues, and retrying. If the auto-fix fails, Drift will show you the error and suggest next steps. You can also ask:
 
-```
-drift> what went wrong with the last build?
+```drift
+what went wrong with the last build?
 ```
 
 ### How do I stop a running simulation?
 
 From the `drift>` prompt:
 
-```
-drift> /ps          # see running processes
-drift> stop gazebo  # ask Drift to stop a specific process
-drift> /exit        # exit Drift (stops managed processes)
+```drift
+/ps          # see running processes
+stop gazebo  # ask Drift to stop a specific process
+/exit        # exit Drift (stops managed processes)
 ```
 
 ---
