@@ -3,30 +3,18 @@ title: "Quickstart"
 description: "Go from zero to a running robotics simulation in under 5 minutes"
 ---
 
-## Before you begin
-
-Make sure you have:
-
-- **ROS2 Humble or Jazzy** installed — [official install guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
-- **Gazebo Sim (Harmonic)** installed — [official install guide](https://gazebosim.org/docs/harmonic/install_ubuntu)
-- An **x86\_64** machine running Ubuntu 20.04+
-
-<Info>
-  The steps below take under 5 minutes once the prerequisites above are in place. Installing ROS2 and Gazebo from scratch takes significantly longer — complete those first before continuing.
-</Info>
-
 ### Recommended setup
 
 <Tabs>
   <Tab title="Ubuntu (Native)">
-    Running Ubuntu natively on an x86\_64 machine is the recommended setup — you'll get the best performance for Gazebo rendering and ROS2.
+    Running Ubuntu natively on an x86\_64 machine is the recommended setup for best performance for Gazebo rendering and ROS2.
 
     **Supported versions:**
     - Ubuntu 20.04 (Focal)
-    - Ubuntu 22.04 (Jammy) — recommended
+    - Ubuntu 22.04 (Jammy)- recommended
     - Ubuntu 24.04 (Noble)
 
-    Use your system terminal (GNOME Terminal, Konsole, or any terminal emulator) — no additional setup needed.
+    Use your system terminal (GNOME Terminal, Konsole, or any terminal emulator), or the integrated terminal in VS Code or Cursor without any additional setup.
   </Tab>
 
   <Tab title="macOS (via VMware)">
@@ -65,15 +53,6 @@ Verify the installation:
 drift --help
 ```
 
-You should see:
-
-```
-Get started with:
-  drift --help        Show help
-  drift init          Initialize project
-  drift simulate      Start simulation
-```
-
 <Accordion title="Prefer a manual install?">
   Download the latest `.deb` package from the [GitHub Releases page](https://github.com/drift-tech/drift-releases/releases) and install it with:
 
@@ -89,6 +68,7 @@ Get started with:
 Navigate to the directory where you want your project and start Drift:
 
 ```bash
+cd your-project
 drift
 ```
 
@@ -96,18 +76,35 @@ You'll see the Drift welcome screen with an interactive prompt:
 
 ```
 🚀 Welcome to Drift CLI
-   (Closed Beta)
+
    Your Copilot for robotics simulations
 
 drift>
 ```
 
-## Step 3: Build your first simulation
+## Step 3: Set up ROS2 and Gazebo with Drift
+
+Before creating your first simulation, make sure ROS2 and Gazebo are available:
+
+```bash
+ros2 --version
+gazebo --version  # or `gz --version` depending on your install
+```
+
+If they are not installed on the system, ask Drift to install and configure both for you with a prompt:
+
+```drift
+install the latest version and configure ROS2 Humble and Gazebo Harmonic
+```
+
+Drift will inspect your environment, install the required packages, and configure your workspace.
+
+## Step 4: Build your first simulation
 
 At the `drift>` prompt, describe what you want to build in plain English:
 
-```
-drift> create a pick-and-place robot simulation
+```drift
+create a pick-and-place robot simulation
 ```
 
 Drift plans and executes every step, printing progress as it goes:
@@ -129,12 +126,12 @@ Ready. Run: launch my robot with the world file
   If a build step fails, Drift automatically diagnoses and retries before surfacing the error to you.
 </Note>
 
-## Step 4: Launch the simulation
+## Step 5: Launch the simulation
 
 Once the build completes, launch everything:
 
-```
-drift> launch my robot with the world file
+```drift
+launch my robot with the world file
 ```
 
 Gazebo Sim will open in a new window. You should see a ground plane, a table, pick objects, and your robot arm. Back in the terminal, Drift confirms the running processes:
@@ -146,14 +143,14 @@ Gazebo Sim will open in a new window. You should see a ground plane, a table, pi
 All processes running. Use /ps to view details.
 ```
 
-## Step 5: Iterate and debug
+## Step 6: Iterate and debug
 
-This is where Drift shines. Keep building on what you have — each change triggers only the necessary rebuilds:
+This is where Drift shines. Keep building on what you have and each change triggers only the necessary rebuilds:
 
-```
-drift> add a lidar sensor to my robot and rebuild
-drift> why isn't my camera publishing images?
-drift> show me the running processes
+```drift
+add a lidar sensor to my robot and rebuild
+why isn't my camera publishing images?
+show me the running processes
 ```
 
 You don't have to start over. Just describe the next thing you want.
@@ -164,26 +161,26 @@ You don't have to start over. Just describe the next thing you want.
   <Accordion title="Be specific in your prompts">
     Vague prompts produce generic results. Instead of:
 
-    ```
-    drift> make a robot
+    ```drift
+    make a robot
     ```
 
     Try:
 
-    ```
-    drift> create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a depth camera mounted on the wrist
+    ```drift
+    create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a depth camera mounted on the wrist
     ```
 
-    The more detail you give about the robot type, sensors, environment, and task — the better the output.
+    The more detail you give about the robot type, sensors, environment, and task; the better the output.
   </Accordion>
 
   <Accordion title="Let Drift explore before making changes">
     Before modifying a simulation, ask Drift to inspect what's already there:
 
-    ```
-    drift> what topics are being published?
-    drift> what does my current URDF look like?
-    drift> /ps
+    ```drift
+    what topics are being published?
+    what does my current URDF look like?
+    /ps
     ```
 
     This helps Drift make more targeted changes and avoids unnecessary rebuilds.
@@ -192,10 +189,10 @@ You don't have to start over. Just describe the next thing you want.
   <Accordion title="Debug by asking, not by guessing">
     When something breaks, describe the symptom directly:
 
-    ```
-    drift> why isn't my camera publishing images?
-    drift> what went wrong with the last build?
-    drift> my robot arm isn't moving — what's wrong?
+    ```drift
+    why isn't my camera publishing images?
+    what went wrong with the last build?
+    my robot arm isn't moving- what's wrong?
     ```
 
     Drift checks your ROS2 topics, logs, URDF config, and process state to give you a diagnosis.
