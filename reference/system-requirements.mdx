@@ -9,7 +9,7 @@ description: "Supported platforms, dependencies, and compatibility for Drift CLI
 |------------|-----------|
 | **Operating System** | Ubuntu 20.04+ (Debian-based distributions) |
 | **Architecture** | x86_64 (amd64) |
-| **ROS Version** | ROS2 — Humble (LTS) or Jazzy recommended; Foxy is EOL and unsupported |
+| **ROS Version** | ROS2 Humble (LTS) or Jazzy recommended; Foxy is EOL and unsupported |
 | **Simulator** | Gazebo Sim (Harmonic) |
 
 <Note>
@@ -24,37 +24,24 @@ Drift CLI requires the following to be installed on your system:
 
 Drift works with ROS2 distributions. Recommended: **ROS2 Humble** (LTS).
 
-Install ROS2 Humble on Ubuntu:
-```bash
-# Follow the official ROS2 installation guide
-# https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
-```
+Install ROS2 Humble on Ubuntu: [official install guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html) or ask Drift to install it after launching.
 
 ### Gazebo Sim
 
 Drift uses **Gazebo Sim (Harmonic)** for simulation rendering and physics.
 
-Install Gazebo Harmonic:
-```bash
-# Follow the official Gazebo installation guide
-# https://gazebosim.org/docs/harmonic/install_ubuntu
-```
+Install Gazebo Harmonic: [official install guide](https://gazebosim.org/docs/harmonic/install_ubuntu) or ask Drift to install it after launching.
 
 ### Additional Tools
+
+<Note>
+Drift works in any terminal, including the integrated terminal in **VS Code** or **Cursor** with no extra setup.
+</Note>
 
 Drift relies on standard ROS2 build tools that come with a typical ROS2 installation:
 
 - `colcon` — Build tool for ROS2 workspaces
 - `rosdep` — Dependency management for ROS2 packages
-
-## Not Yet Supported
-
-The following are not currently supported but are planned:
-
-- macOS and Windows
-- ARM-based architectures (e.g., Raspberry Pi, Apple Silicon)
-- ROS1
-- Classic Gazebo (Gazebo 11 and earlier)
 
 ## Verifying Your Setup
 

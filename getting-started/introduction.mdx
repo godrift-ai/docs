@@ -1,18 +1,16 @@
 ---
 title: "Introduction"
-description: "Drift is your AI copilot for building, testing, and debugging robotics simulations — just come with prompts, we handle the rest."
+description: "Drift is your AI copilot for building, testing, and debugging robotics simulations. Just come with prompts, we handle the rest."
 ---
 
 Drift is your AI copilot for robotics development. Building, testing, and debugging robot simulations has always required deep expertise across ROS2, Gazebo, URDF, and more — Drift removes that barrier entirely. Describe what you want in plain English, and Drift handles all the complexity behind the scenes.
 
-From setting up a workspace to launching a full simulation environment, you just come with prompts.
+From setting up a workspace to launching a full simulation environment, you just come with prompts, for example:
 
-```
-drift> create a three arm manipulator with camera sensor
-drift> launch my robot with the custom world file
-drift> add a lidar sensor to my robot and rebuild
-drift> why isn't my camera publishing images?
-```
+- `create a three arm manipulator with camera sensor`
+- `launch my robot with the custom world file`
+- `add a lidar sensor to my robot and rebuild`
+- `why isn't my camera publishing images?`
 
 {/*
   VIDEO: Save your trimmed clip (10–15 sec) to /assets/videos/drift-demo.mp4
@@ -31,35 +29,35 @@ Drift runs as an interactive CLI agent on your local machine. When you type a pr
 
 1. **You describe** what you want in plain English at the `drift>` prompt.
 2. **Drift plans** the steps needed: workspace layout, robot description, world file, launch configuration.
-3. **Drift executes** — running builds, resolving errors automatically, and launching Gazebo.
-4. **You iterate** — add sensors, change configurations, debug issues by asking follow-up questions.
+3. **Drift executes**- running builds, resolving errors automatically, and launching Gazebo.
+4. **You iterate**- add sensors, change configurations, debug issues by asking follow-up questions.
 
 Everything runs locally. Drift does not upload your files or simulation state anywhere.
 
 ## Why Drift?
 
-Robotics simulation is powerful — but getting there is painful. A typical setup involves writing URDF files by hand, configuring Gazebo worlds from scratch, debugging launch files, and managing a tangle of ROS2 nodes — all before you've even started on the actual robot logic.
+Robotics simulation is powerful, but getting there is painful. A typical setup involves writing URDF files by hand, configuring Gazebo worlds from scratch, debugging launch files, and managing a tangle of ROS2 nodes; all before you've even started on the actual robot logic.
 
 Drift eliminates that friction. You stay focused on building robots. Drift handles everything else.
 
 ## Key Capabilities
 
-**Project scaffolding from a single prompt** — Describe the robot you need and Drift generates the full project: URDF with correct inertia and collision geometry, ROS2 package structure, Gazebo plugins, controller configs, and launch files. Not templates — working, buildable code from a description.
+**Project scaffolding from a single prompt**-  Describe the robot you need and Drift generates the full project: URDF with correct inertia and collision geometry, ROS2 package structure, Gazebo plugins, controller configs, and launch files. Not templates — working, buildable code from a description.
 
-**Full simulation stack management** — Drift launches Gazebo, spawns your robot, opens RViz with the right config, and bridges all topics in one command. It tracks every background process, so you're not juggling terminals or hunting for zombie `gzserver` instances. Auto-detects your Gazebo version (Classic, Harmonic, Ionic).
+**Full simulation stack management**- Drift launches Gazebo, spawns your robot, opens RViz with the right config, and bridges all topics in one command. It tracks every background process, so you're not juggling terminals or hunting for zombie `gzserver` instances. Auto-detects your Gazebo version (Classic, Harmonic, Ionic).
 
-**Debugging and live ROS2 inspection** — Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to 23 ROS2 tools — list nodes, echo topics, call services, get and set parameters — all through natural language.
+**Debugging and live ROS2 inspection**- Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to 23 ROS2 tools — list nodes, echo topics, call services, get and set parameters — all through natural language.
 
-**Build error recovery** — Drift reads `colcon` output, finds the root cause, and fixes it — whether that's `CMakeLists.txt`, `package.xml`, `setup.py`, or a missing dependency. When you add a sensor, it updates the URDF, bridge config, and launch file together — changes stay consistent across files.
+**Build error recovery**- Drift reads `colcon` output, finds the root cause, and fixes it- whether that's `CMakeLists.txt`, `package.xml`, `setup.py`, or a missing dependency. When you add a sensor, it updates the URDF, bridge config, and launch file together — changes stay consistent across files.
 
-**You stay in control** — Every command is shown before it runs. Press `ESC` to pause mid-execution and step through one command at a time, or let Drift run the full task uninterrupted. Use `drift -c` for CI pipelines and scripted workflows.
+**You stay in control**- Every command is shown before it runs. Press `ESC` to pause mid-execution and step through one command at a time, or let Drift run the full task uninterrupted. Use `drift -c` for CI pipelines and scripted workflows.
 
 ## Who is Drift for?
 
-- **Students** — learn robotics concepts without getting stuck on ROS2 configuration
-- **Researchers** — iterate faster on algorithms without simulation setup slowing you down
-- **Engineers** — prototype and test production systems in a fraction of the time
-- **Hobbyists** — bring robot ideas to life without needing deep ROS2 expertise
+- **Students**: learn robotics concepts without getting stuck on ROS2 configuration
+- **Researchers**: iterate faster on algorithms without simulation setup slowing you down
+- **Engineers**: prototype and test production systems in a fraction of the time
+- **Hobbyists**: bring robot ideas to life without needing deep ROS2 expertise
 
 ## Current Status
 
@@ -67,16 +65,16 @@ Drift CLI is in **closed beta** (v1.0.12). It runs on Ubuntu 20.04+ with ROS2 an
 
 ## Known Limitations
 
-Because Drift is in closed beta, there are rough edges worth knowing about upfront:
+Because Drift is in its early versions, there are rough edges worth knowing about upfront:
 
-- **Prompt sensitivity** — Drift works best with clear, specific descriptions. Very short or ambiguous prompts (e.g., "make a robot") may produce generic results. More detail yields better output.
-- **Complex multi-robot setups** — Multi-robot coordination and shared worlds are experimental and may require manual adjustments.
-- **Custom Gazebo plugins** — Third-party or custom Gazebo plugins may not be auto-configured correctly. You may need to reference them explicitly in your prompt.
-- **MoveIt integration** — MoveIt2 motion planning is not currently managed by Drift. Drift creates the robot description and simulation, but MoveIt configuration must be set up separately.
-- **ARM architecture** — Drift's binary targets x86_64 (amd64). Apple Silicon (M1/M2/M3) users can run Drift via VMware Fusion using an x86_64 Ubuntu image. Raspberry Pi is not supported.
-- **Internet connectivity** — Drift requires internet access to process prompts (the AI agent calls an external API). Your local files and simulation stay on your machine.
+- **Prompt sensitivity**: Drift works best with clear, specific descriptions. Very short or ambiguous prompts (e.g., "make a robot") may produce generic results. More detail yields better output.
+- **Complex multi-robot setups**: Multi-robot coordination and shared worlds are experimental and may require manual adjustments.
+- **Custom Gazebo plugins**: Third-party or custom Gazebo plugins may not be auto-configured correctly. You may need to reference them explicitly in your prompt.
+- **MoveIt integration**: MoveIt2 motion planning is not currently managed by Drift. Drift creates the robot description and simulation, but MoveIt configuration must be set up separately.
+- **ARM architecture**: Drift's binary targets x86_64 (amd64). Apple Silicon (M1/M2/M3) users can run Drift via VMware Fusion using an x86_64 Ubuntu image. Raspberry Pi is not supported.
+- **Internet connectivity**: Drift requires internet access to process prompts (the AI agent calls an external API). Your local files and simulation stay on your machine.
 
-If you hit an issue, describe it at the `drift>` prompt — the agent will attempt to diagnose and recover. For persistent problems, [open an issue on GitHub](https://github.com/drift-tech/drift-releases/issues).
+If you hit an issue, describe it at the `drift>` with a prompt, the agent will attempt to diagnose and recover. For persistent problems, [open an issue on GitHub](https://github.com/drift-tech/drift-releases/issues).
 
 ## Next Steps
 
