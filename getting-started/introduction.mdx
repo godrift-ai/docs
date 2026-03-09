@@ -46,7 +46,7 @@ Drift eliminates that friction. You stay focused on building robots. Drift handl
 
 **Full simulation stack management**- Drift launches Gazebo, spawns your robot, opens RViz with the right config, and bridges all topics in one command. It tracks every background process, so you're not juggling terminals or hunting for zombie `gzserver` instances.
 
-**Debugging and live ROS2 inspection**- Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to 23 ROS2 tools - list nodes, echo topics, call services, get and set parameters - all through natural language.
+**Debugging and live ROS2 inspection**- Describe the symptom and Drift does the detective work: inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, and traces the command chain from publisher to controller to joint. For live inspection, it has access to all ROS2 tools - list nodes, echo topics, call services, get and set parameters - all through natural language.
 
 **Build error recovery**- Drift reads `colcon` output, finds the root cause, and fixes it- whether that's `CMakeLists.txt`, `package.xml`, `setup.py`, or a missing dependency. When you add a sensor, it updates the URDF, bridge config, and launch file together - changes stay consistent across files.
 
@@ -57,11 +57,11 @@ Drift eliminates that friction. You stay focused on building robots. Drift handl
 - **Students**: learn robotics concepts without getting stuck on ROS2 configuration
 - **Researchers**: iterate faster on algorithms without simulation setup slowing you down
 - **Engineers**: prototype and test production systems in a fraction of the time
-- **Hobbyists**: bring robot ideas to life without needing deep ROS2 expertise
+- **Hobbyists**: bring robot ideas to life without needing any deep expertise
 
 ## Current Status
 
-Drift CLI is in **closed beta** (v1.0.12). It runs on Ubuntu 20.04+ with ROS2 and Gazebo Sim. [Sign up for early access](https://godrift.ai) or [get started with the Quickstart](/getting-started/quickstart) if you have access.
+Drift CLI is in **open beta** (v1.0.14). It runs on Ubuntu 20.04+ with ROS2 and Gazebo Sim. Install Drift or [get started with the Quickstart](/getting-started/quickstart).
 
 ## Known Limitations
 

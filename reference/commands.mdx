@@ -29,7 +29,7 @@ These flags are used when launching Drift from your shell (not from the `drift>`
 
 ### `drift init`
 
-Run `drift init` in an empty directory to scaffold a new project. Drift will set up the workspace structure it expects — including ROS2 package layout and configuration — so that subsequent prompts inside the `drift>` shell have a clean starting point.
+Run `drift init` in an empty directory to scaffold a new project. Drift will set up the workspace structure it expects - including ROS2 package layout and configuration - so that subsequent prompts inside the `drift>` shell have a clean starting point.
 
 Use this when you want to start a project in a specific directory rather than letting Drift create the workspace from the first prompt.
 
@@ -51,7 +51,7 @@ If no project is found in the current directory, Drift will prompt you to run `d
 
 ### `drift -c "<prompt>"`
 
-Run a single prompt non-interactively — Drift executes the task, auto-approves all steps, and exits cleanly when done. Useful for CI pipelines, batch testing, or quick one-offs from a script.
+Run a single prompt non-interactively - Drift executes the task, auto-approves all steps, and exits cleanly when done. Useful for CI pipelines, batch testing, or quick one-offs from a script.
 
 ```bash
 drift -c "create a ROS2 package called sensor_fusion with ament_python build type"
@@ -122,7 +122,7 @@ At the `drift>` prompt, you can type any request in plain English. Here are the 
 |---------|-------------|
 | `why is my robot not moving when I publish to cmd_vel?` | Checks topic connections, QoS compatibility, and controller chain |
 | `why isn't my camera publishing images?` | Inspects topic list, sensor config, and Gazebo plugin setup |
-| `my robot spawns but falls through the ground — fix it` | Validates URDF inertia tensors and collision geometry |
+| `my robot spawns but falls through the ground - fix it` | Validates URDF inertia tensors and collision geometry |
 
 ## Quick Reference
 
@@ -130,7 +130,7 @@ At the `drift>` prompt, you can type any request in plain English. Here are the 
 |---------------|-------------|
 | New robot project | `create a mobile robot with differential drive and a depth camera` |
 | Fix a broken build | `build my workspace and fix the errors` |
-| Debug simulation | `my robot spawns but doesn't move — figure out why` |
+| Debug simulation | `my robot spawns but doesn't move - figure out why` |
 | Sensor setup | `add a 2D lidar to my robot and bridge it to ROS2` |
 | Launch configuration | `generate a launch file for my robot in Gazebo with RViz` |
 | ROS2 inspection | `list all active topics and show me what /camera/image_raw is publishing` |
@@ -142,7 +142,7 @@ At the `drift>` prompt, you can type any request in plain English. Here are the 
 
 ### Pausing mid-execution
 
-Press **`ESC`** at any point during a multi-step execution to pause. Drift remembers exactly what's been completed and what's still pending — nothing is lost.
+Press **`ESC`** at any point during a multi-step execution to pause. Drift remembers exactly what's been completed and what's still pending - nothing is lost.
 
 When paused, you'll be prompted to choose how to proceed:
 
@@ -153,7 +153,7 @@ When paused, you'll be prompted to choose how to proceed:
 | **Approve all (session)** | Run everything for the rest of the session without asking |
 | **Cancel** | Stop execution and return to the `drift>` prompt |
 
-This gives you full control over how much autonomy Drift has — step through carefully when trying something new, or let it run freely once you're confident.
+This gives you full control over how much autonomy Drift has - step through carefully when trying something new, or let it run freely once you're confident.
 
 ## Auto-Update
 
