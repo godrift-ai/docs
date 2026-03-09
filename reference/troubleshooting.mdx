@@ -272,24 +272,34 @@ Run these first to rule out the basics:
 
 When nothing else works, try these reset steps:
 
+**1. Kill all Drift-related processes:**
+
 ```bash
-# 1. Kill all Drift-related processes
 pkill -f drift
 pkill -f 'gz sim'
 pkill -f rviz2
 pkill -f joint_state_publisher_gui
+```
 
-# 2. Re-install Drift CLI
+**2. Re-install Drift CLI:**
+
+```bash
 curl -fsSL https://godrift.ai/install | bash
+```
 
-# 3. Clean and rebuild your ROS2 workspace
+**3. Clean and rebuild your ROS2 workspace:**
+
+```bash
 cd your_workspace/
 rm -rf build/ install/ log/
 source /opt/ros/$ROS_DISTRO/setup.bash
 rosdep install --from-paths src --ignore-src -y
 colcon build
+```
 
-# 4. Re-login
+**4. Re-login:**
+
+```bash
 drift
 ```
 
