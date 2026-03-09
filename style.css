@@ -11,10 +11,10 @@
   color: #6B0042 !important;
 }
 
-/* Dark mode code blocks — white (match Mintlify's selector for correct specificity) */
+/* Dark mode code blocks — primary brand color (match Mintlify's selector for correct specificity) */
 html.dark .shiki,
 html.dark .shiki span {
-  color: #ffffff !important;
+  color: #6B0042 !important;
 }
 
 /* drift> prompt prefix — visible but not copyable */
