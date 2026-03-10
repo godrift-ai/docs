@@ -13,6 +13,9 @@
     "light": "#9B2060",
     "dark": "#3D0025"
   },
+  "fonts": {
+  "family": "JetBrains Mono"
+ },
   "topbarLinks": [
     {
       "name": "Website",
