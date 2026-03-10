@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 140 565 88">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 140 600 88">
   <defs>
     <clipPath id="a">
       <rect x="0" y="0" width="127" height="99"/>
@@ -40,5 +40,5 @@
       </g>
     </g>
   </g>
-  <text x="137" y="211" font-family="'JetBrains Mono', monospace" font-size="70" font-weight="600" fill="#3d0026">drift docs</text>
+  <text x="137" y="211" font-family="'JetBrains Mono', monospace" font-size="70" font-weight="600" fill="#3d0026">drift <tspan letter-spacing="6">docs</tspan></text>
 </svg>
