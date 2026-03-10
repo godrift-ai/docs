@@ -1,22 +1,3 @@
-/* Strip Shiki VS Code colors — use brand palette instead */
-
-/* Remove all per-token colors */
-.shiki span {
-  color: inherit !important;
-}
-
-/* Light mode code blocks — brand maroon */
-.shiki,
-[data-theme="light"] .shiki {
-  color: #6B0042 !important;
-}
-
-/* Dark mode code blocks — primary brand color (match Mintlify's selector for correct specificity) */
-html.dark .shiki,
-html.dark .shiki span {
-  color: #6B0042 !important;
-}
-
 /* drift> prompt prefix — visible but not copyable */
 pre[language="drift"] .line::before {
   content: "drift> ";
