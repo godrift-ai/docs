@@ -1,9 +1,9 @@
 ---
 title: "Your First Simulation"
-description: "A complete walkthrough — build a pick-and-place robot simulation from scratch with Drift"
+description: "A complete walkthrough to build a pick-and-place robot simulation and launch on Gazebo from scratch with Drift"
 ---
 
-In this guide, you'll build a complete pick-and-place robot simulation from scratch using Drift. By the end, you'll have a robot arm on a table picking up objects in Gazebo Sim — all built through natural language.
+In this guide, you'll build a complete pick-and-place robot simulation from scratch using Drift. By the end, you'll have a robot arm on a table picking up objects in Gazebo Sim.
 
 <Info>
 Make sure you've completed the [Quickstart](/getting-started/quickstart) setup before starting.
@@ -42,7 +42,7 @@ Watch the output as Drift works through each step. If any step fails (e.g., a mi
 Once the build completes, launch everything:
 
 ```drift
-launch my robot with the world file
+launch my robot in Gazebo
 ```
 
 Gazebo Sim will open showing your simulation environment. You should see:
@@ -51,6 +51,10 @@ Gazebo Sim will open showing your simulation environment. You should see:
 - **Pick objects** (boxes or cylinders) on the table
 - A **target marker** showing the goal position
 - Your **robot arm** ready to operate
+
+<Frame>
+  <img src="/assets/images/pick-and-place.png" alt="3-joint manipulator arm rendered in RViz with Joint State Publisher sliders" />
+</Frame>
 
 ## Step 4: Explore the Environment
 

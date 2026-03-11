@@ -23,6 +23,21 @@ From setting up a workspace to launching a full simulation environment, you just
   </Frame>
 */}
 
+## Why Drift?
+
+While tools like Cursor or Claude are excellent for general coding and debugging, they miss context on robotics and that's what Drift eliminates.
+
+In the video below, we tried solving a same Gazebo error using Claude and Drift. 
+- Claude looks at the surface and concludes Gazebo isn't installed- It was. 
+- On the other hand, Drift inspects the actual ROS2 environment: running processes, topic connections, launch file output, and system state. It finds the real cause and fixes it without having to interpret the error.
+
+This is the gap Drift is built for. Not just writing code; understanding the full stack it runs on.
+<Frame>
+  <video autoPlay loop muted playsInline>
+    <source src="/assets/videos/drift-vs-cursor.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
 ## How It Works
 
 Drift runs as an interactive CLI agent on your local machine. When you type a prompt, the agent interprets your request, generates the necessary ROS2 packages, URDF/SDF files, and launch files, invokes `colcon` to build the workspace, and manages Gazebo processes - all without you touching a config file.
@@ -33,12 +48,6 @@ Drift runs as an interactive CLI agent on your local machine. When you type a pr
 4. **You iterate**- add sensors, change configurations, debug issues by asking follow-up questions.
 
 Everything runs locally. Drift does not upload your files or simulation state anywhere.
-
-## Why Drift?
-
-Robotics simulation is powerful, but getting there is painful. A typical setup involves writing URDF files by hand, configuring Gazebo worlds from scratch, debugging launch files, and managing a tangle of ROS2 nodes; all before you've even started on the actual robot logic.
-
-Drift eliminates that friction. You stay focused on building robots. Drift handles everything else.
 
 ## Key Capabilities
 
