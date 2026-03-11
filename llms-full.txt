@@ -1,6 +1,6 @@
 # Drift
 
-> Drift is an AI copilot CLI for robotics simulation. Users describe what they want in plain English at the `drift>` prompt. Drift generates URDF/SDF robot descriptions, ROS2 package structures, Gazebo world files, and launch files — then builds the workspace with colcon and manages all simulation processes. No manual config files required.
+Drift is an AI copilot CLI for robotics simulation. Users describe what they want in plain English at the `drift>` prompt. Drift generates URDF/SDF robot descriptions, ROS2 package structures, Gazebo world files, and launch files — then builds the workspace with colcon and manages all simulation processes. No manual config files required.
 
 Install: `curl -fsSL https://godrift.ai/install | bash`
 Start: `drift` (in any terminal on Ubuntu)
