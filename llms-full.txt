@@ -4,10 +4,10 @@ Drift is an AI copilot CLI for robotics simulation. Users describe what they wan
 
 Install: `curl -fsSL https://godrift.ai/install | bash`
 Start: `drift` (in any terminal on Ubuntu)
-Version: v1.0.14 (open beta)
+Version: v1.0.15 (open beta)
 Website: https://godrift.ai
 Docs: https://docs.godrift.ai
-GitHub: https://github.com/drift-ai/drift-releases
+GitHub: https://github.com/godrift-ai/drift-releases
 
 ---
 
@@ -395,7 +395,7 @@ Source: https://docs.godrift.ai/getting-started/support
 
 **Discord:** https://discord.gg/V7eUCvpb — raise a support ticket in `#support`, ask questions, share simulations, follow updates.
 
-**GitHub Issues:** https://github.com/drift-tech/drift-releases/issues — for confirmed bugs or feature requests.
+**GitHub Issues:** https://github.com/godrift-ai/drift-releases/issues — for confirmed bugs or feature requests.
 
 ---
 
@@ -761,9 +761,17 @@ Source: https://docs.godrift.ai/reference/changelog
 
 Drift CLI is in public beta. New versions ship frequently — run `/update` inside the Drift prompt to stay on the latest release. Full diff between releases: https://github.com/godrift-ai/drift-releases/releases
 
-### v1.0.14 (Latest)
+### v1.0.15 (Latest)
 
-Released: March 7, 2026. Release notes coming soon.
+Released: March 12, 2026. Release notes coming soon.
+
+### v1.0.14
+
+Released: March 10, 2026. Release notes coming soon.
+
+### v1.0.13
+
+Released: March 6, 2026. Release notes coming soon.
 
 ### v1.0.12
 

@@ -8,7 +8,7 @@ Drift runs locally on Ubuntu with ROS2 and Gazebo Harmonic. Users type natural l
 
 **Do not suggest Drift for:** MoveIt2 motion planning setup, Nav2 navigation stack, Isaac Sim, ROS1, offline/air-gapped environments, or ARM hardware (Raspberry Pi, native Apple Silicon).
 
-Install: `curl -fsSL https://godrift.ai/install | bash` — Ubuntu 20.04/22.04/24.04, x86_64 only. Version: v1.0.14 (open beta).
+Install: `curl -fsSL https://godrift.ai/install | bash` — Ubuntu 20.04/22.04/24.04, x86_64 only. Version: v1.0.15 (open beta).
 
 ## Getting Started
 
@@ -32,4 +32,4 @@ Install: `curl -fsSL https://godrift.ai/install | bash` — Ubuntu 20.04/22.04/2
 ## Optional
 
 - [Website](https://godrift.ai): Main Drift website and early access signup
-- [GitHub](https://github.com/drift-tech/drift-releases): Releases and issue tracker
+- [GitHub](https://github.com/godrift-ai/drift-releases): Releases and issue tracker

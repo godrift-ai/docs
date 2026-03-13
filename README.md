@@ -57,7 +57,7 @@ docs/
 ## Reporting Issues
 
 - **Docs issue** (wrong info, broken link, unclear explanation): [Open an issue](https://github.com/godrift-ai/docs/issues)
-- **Drift CLI bug**: [Open an issue on the releases repo](https://github.com/drift-tech/drift-releases/issues)
+- **Drift CLI bug**: [Open an issue on the releases repo](https://github.com/godrift-ai/drift-releases/issues)
 
 ---
 
