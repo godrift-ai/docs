@@ -26,6 +26,16 @@
     "name": "Get Early Access",
     "url": "https://godrift.ai"
   },
+    "navbar": {
+      "primary": {
+        "type": "button",
+        "label": "Get Started",
+        "href": "https://platform.godrift.ai/"
+      },
+      "links": [
+        { "label": "Website", "href": "https://godrift.ai/" }
+      ]
+    },
   "navigation": {
     "groups": [
       {
