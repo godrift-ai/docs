@@ -59,9 +59,14 @@
         "pages": [
           "reference/commands",
           "reference/system-requirements",
-          "reference/troubleshooting",
-          "reference/changelog"
+          "reference/troubleshooting"
         ]
+      },
+      {
+       "group": "Changelog",
+        "pages": [
+          "reference/changelog"
+        ] 
       }
     ]
   },
