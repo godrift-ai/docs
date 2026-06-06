@@ -15,28 +15,27 @@ The fastest way:
 /skill add ./team-docs/ekf-tuning.md
 ```
 
+This copies the file to `~/.drift/skills/<name>/SKILL.md` and registers it as a **user-global** skill — active in every workspace on this machine.
+
+To install it as a **project-scoped** skill instead (lives inside your repo, ships when you commit it):
+
+```drift
+/skill add ./team-docs/ekf-tuning.md --repo
+```
+
+That copies the file to `<repoRoot>/.drift/skills/<name>/SKILL.md` so anyone who clones the repo picks it up automatically.
+
 Or in plain English at the prompt:
 
 ```drift
 add this skill: ./team-docs/ekf-tuning.md
 ```
 
-Drift validates the file, registers it for the workspace, and confirms which prompt categories it'll trigger on (build, simulation, robot description, debugging, etc.).
+Drift validates the file, copies it into the right managed location, distils it (so the agent has a fast lookup index), and confirms which prompt categories it'll trigger on (build, simulation, robot description, debugging, etc.).
 
-## Where skills live on disk
-
-Drift discovers skills from two locations:
-
-| Location | Scope |
-|---|---|
-| `<workspace>/.claude/skills/<name>/SKILL.md` | Active only inside this workspace |
-| `~/.claude/skills/<name>/SKILL.md` | Active in every workspace on this machine |
-
-<Tip>
-  The `.claude/skills/` path is the same convention Anthropic Claude Code uses, so a skill you write for one tool works for both.
-</Tip>
-
-`/skill add <path>` copies your file into the right place; you don't have to manage the directory structure yourself.
+<Note>
+  **A loose `skills.md` in your workspace root is not picked up.** The convention is one directory per skill, with the file literally named `SKILL.md` inside it (e.g. `<repo>/.drift/skills/ekf-tuning/SKILL.md`). `/skill add <path>` does the directory-and-rename housekeeping for you.
+</Note>
 
 ## What goes in a `SKILL.md`
 
@@ -70,12 +69,6 @@ applies_to:
 
 The front-matter helps Drift decide when the skill is relevant (`applies_to` is a list of categories — Drift will load the skill for prompts that match). The body is plain markdown; write it the way you'd explain it to a new hire.
 
-## When Drift uses a skill
-
-On every prompt, Drift classifies the work into one or more categories (e.g. `BUILD`, `SIMULATION`, `ROBOT_DESCRIPTION`, `NODE`). Skills whose `applies_to` list overlaps with the prompt's categories are loaded into the planner's context — your procedure becomes the agent's procedure for that step.
-
-You don't have to think about category matching. The discovery and loading happen behind the scenes.
-
 ## Listing and removing
 
 ```drift
@@ -95,18 +88,20 @@ Drops the skill. The file is moved out of the active path; the agent stops using
 Two patterns work well:
 
 ### Pattern 1: skills in the project repo
-Commit `.claude/skills/` under your project repo. Anyone who clones the project gets your skills automatically:
+Commit `.drift/skills/` under your project repo. Anyone who clones the project gets your skills automatically:
 
 ```
 warehouse_bot/
 ├── DRIFT.md
-├── .claude/
+├── .drift/
 │   └── skills/
 │       ├── ekf-tuning/SKILL.md
 │       └── gazebo-plugin/SKILL.md
 ├── src/
 └── ...
 ```
+
+`/skill add <path> --repo` installs into exactly this layout. If your team already keeps skills in `.claude/skills/` (Claude Code convention), Drift reads those too — see the compat note below.
 
 This is the right pattern for project-specific procedures.
 
@@ -125,6 +120,10 @@ Then in Drift:
 ```
 
 This is the right pattern for cross-project conventions (build flags, launch-file structure, naming rules).
+
+### Claude Code compat
+
+If you already use Claude Code or Cursor and keep skills in `.claude/skills/<name>/SKILL.md`, Drift reads those too. Both `.drift/skills/` (the Drift-native location) and `.claude/skills/` (the Claude Code convention) are scanned in user-global (`~/.{drift,claude}/skills/`) and project (`<repoRoot>/.{drift,claude}/skills/`) scopes. You don't have to migrate; the agent will pick up whichever you have. `/skill add` always copies into `.drift/skills/` so the install path is unambiguous.
 
 ## Examples of skills worth writing
 
