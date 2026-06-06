@@ -51,7 +51,7 @@ Your files and simulation state stay on your machine.
 
 ## Key Capabilities
 
-### Project memory you write once
+### Project context you write once
 Drop a `DRIFT.md` (or `CLAUDE.md`) at your workspace root with your robot's specs, topic names, frame IDs, build conventions, naming rules. Drift reads it before every step. Stop re-explaining your project to the agent on call #2.
 
 Run `/init` and Drift will scan your workspace and write a starter `DRIFT.md` for you.
@@ -65,7 +65,7 @@ Or add one inline: `/skill add ./team-skills/ekf-tuning.md`. Your team's experti
 Author URDFs, MJCF scenes, SDF worlds, sensor plugins, controllers. Launch headless or interactive. Debug contact failures, wheel-spin, transform mismatches, NaN-in-qacc, plugin load errors. Not "AI can write some XML" — actually runs the sim and reads the result back.
 
 ### Multi-step builds that hold context
-Workspace → robot → controllers → world → sim → tuning → docs, one prompt. Drift remembers what it built two steps ago, doesn't hallucinate file paths, and updates URDF + bridge + launch as one coordinated change.
+Workspace → robot → controllers → world → sim → tuning → docs, one prompt. Drift remembers what it built steps ago, doesn't hallucinate file paths, and updates URDF + bridge + launch as one coordinated change.
 
 ### Live ROS2 inspection and debugging
 Describe the symptom; Drift does the detective work. Inspects running nodes, checks topic connections and QoS compatibility, validates URDF inertia tensors, traces the command chain from publisher to controller to joint. All ROS2 introspection tools available through natural language.
@@ -75,9 +75,6 @@ Drift reads `colcon` output, finds the root cause, and fixes it — whether that
 
 ### You stay in control
 Every command is shown before it runs. Press `ESC` to pause mid-execution and step through one command at a time, or let Drift run uninterrupted. Use `drift -c` for CI pipelines and scripted workflows.
-
-### Cost transparency
-Per-query token and dollar tracking. See exactly what each robot build cost. Set budgets per workspace in your account dashboard.
 
 ## Who is Drift for?
 
@@ -103,7 +100,7 @@ If you hit an issue, describe it at the `drift>` prompt — the agent will attem
   <Card title="Quickstart" icon="rocket" href="/getting-started/quickstart">
     Install Drift and go from zero to a running simulation in minutes
   </Card>
-  <Card title="Project Memory" icon="brain" href="/guides/project-memory">
+  <Card title="Project Context" icon="brain" href="/guides/project-context">
     Teach Drift your project once with DRIFT.md
   </Card>
   <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">

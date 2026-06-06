@@ -53,7 +53,7 @@
           "guides/first-simulation",
           "guides/manipulator-rviz",
           "guides/mujoco-scene",
-          "guides/project-memory",
+          "guides/project-context",
           "guides/skills"
         ]
       },
