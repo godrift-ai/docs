@@ -18,15 +18,16 @@ clone mujoco_menagerie if I don't have it, set up a scene with the
 Unitree Go2 from menagerie standing on flat terrain with three 0.1m
 stairs in front of it, write a Python control loop that holds the
 default standing keyframe with PD on every joint, run 5 seconds
-headless, and log joint positions, IMU, and foot-contact forces to
-sensor_log.csv
+headless, log joint positions, IMU, and per-foot contact data
+(Drift adds force sensor sites at each foot if the Menagerie model
+doesn't include them) to sensor_log.csv
 ```
 
-From this single prompt, Drift:
+From this prompt (plus likely a tuning follow-up or two), Drift:
 
-- Clones (or locates) `mujoco_menagerie` in `~/dev/mujoco_menagerie` if not already present
+- Clones `mujoco_menagerie` to a path you confirm if it isn't on your system already, or asks where it lives if it is
 - Composes `go2_scene.xml` that `<include>`s the Menagerie Go2 model and adds the floor + 3-step staircase
-- Picks a sensible spawn pose so the robot's feet rest on the ground without penetration
+- Spawns the Go2 at the Menagerie keyframe so the feet rest on the ground
 - Writes a `run_sim.py` that loads the keyframe, applies PD control on all 12 joints, steps the sim for 5 seconds, and logs sensors at 100 Hz
 - Runs the sim, prints the final base pose and any contact issues
 - Drops a `DRIFT.md` summarising the scene, the controller, and what to tune next
@@ -37,7 +38,7 @@ From this single prompt, Drift:
 your-project/
 ├── go2_scene.xml          # the scene XML: floor + staircase + Menagerie include
 ├── run_sim.py             # PD hold-pose control loop + CSV logger
-├── sensor_log.csv         # 500 rows: 12 joint pos, IMU accel/gyro, 4 foot contacts
+├── sensor_log.csv         # 500 rows: 12 joint pos, IMU accel/gyro, per-foot contact force
 └── DRIFT.md               # what Drift built + what to iterate on
 ```
 
@@ -67,7 +68,7 @@ Open it interactively:
 open go2_scene.xml in the MuJoCo viewer
 ```
 
-You'll see the Go2 standing in default pose facing the staircase, joints held by the PD controller. The CSV next to it shows the IMU steady, joint positions near the keyframe targets, and foot contact forces ≈ body weight / 4 on each leg.
+If the gains are sane, you'll see the Go2 standing in the default pose facing the staircase, joints held by the PD controller. The CSV next to it shows the IMU steady, joint positions near the keyframe targets, and foot contact forces roughly balanced across the four legs. If the robot collapses, that's a gain tune — see the gotchas at the bottom.
 
 ## Iterating from here
 
@@ -108,21 +109,22 @@ That's a real bridge Drift will build — your policy, our wiring.
 ## Common gotchas
 
 <AccordionGroup>
-  <Accordion title="`mujoco_menagerie` clone path not picked up">
-    Drift defaults to looking in `~/dev/mujoco_menagerie` and `~/mujoco_menagerie`. If yours lives elsewhere, tell it once:
+  <Accordion title="Tell Drift where Menagerie lives once">
+    Drift doesn't assume a fixed Menagerie path. Easiest pattern: tell it the path once and pin it in `DRIFT.md` so every future prompt uses the same one.
 
     ```drift
-    my mujoco_menagerie is at /opt/models/mujoco_menagerie — use that path
+    my mujoco_menagerie is at /opt/models/mujoco_menagerie — use that path,
+    and add it to DRIFT.md so future prompts know
     ```
 
-    Then add a line in `DRIFT.md`:
+    `DRIFT.md` ends up with:
 
     ```markdown
     ## Models
     - MuJoCo Menagerie path: /opt/models/mujoco_menagerie
     ```
 
-    Every future prompt picks that up automatically.
+    Future prompts now resolve `mujoco_menagerie` to that absolute path without you re-stating it.
   </Accordion>
 
   <Accordion title="Robot tips over on first step">

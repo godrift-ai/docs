@@ -21,14 +21,15 @@ in red/green/blue, write a Python control loop that moves the left
 end-effector to hover 5cm above the leftmost cube and the right
 end-effector to hover 5cm above the rightmost cube using
 joint-position interpolation from the default keyframe, run 5s
-headless, and log both wrists' force/torque + all 14 joint angles
+headless, log both wrists' force/torque (Drift adds the sensor sites
+to the Aloha if they aren't there already) and all 14 joint angles
 ```
 
 From this single prompt, Drift:
 
 - Locates or clones `mujoco_menagerie`
 - Composes `aloha_scene.xml` that `<include>`s the Menagerie Aloha and adds the table + three cubes at the requested colors and positions
-- Computes joint targets for each arm: simple per-joint interpolation from the keyframe pose to a pose where the wrist is over the target cube (Drift uses the Aloha forward-kinematics chain to pick reasonable angles — it doesn't claim to be a full IK solver)
+- Writes joint-space targets per arm that approximate the wrist hovering over each target cube. The first attempt comes from MuJoCo's forward kinematics — pose, check wrist position, nudge — but it's not a full IK solver and may overshoot or undershoot by a few centimetres. Refine with a follow-up like `"the left wrist is 5cm short — adjust the shoulder-pitch target by +0.1 rad"`.
 - Writes a `run_sim.py` that linearly interpolates between current and target joint angles over 5 seconds, applies position control, and logs at 100 Hz
 - Runs headless, prints the final EE positions vs targets, and notes any contact between wrist and table
 

@@ -21,17 +21,21 @@ and log IMU accel + gyro, base position + orientation, and all 19
 joint angles + torques to sensor_log.csv
 ```
 
-From this single prompt, Drift:
+From this prompt — and a tuning follow-up or two, since humanoid PD stability is gain-sensitive — Drift:
 
-- Locates or clones `mujoco_menagerie`
+- Asks where `mujoco_menagerie` lives, or clones it to a path you confirm
 - Composes `h1_scene.xml` that `<include>`s the Menagerie H1 and adds a 10×10m floor
 - Spawns the H1 at the default keyframe's qpos so the feet rest cleanly on the ground
 - Writes a `run_sim.py` that:
   - Loads the H1 keyframe pose as the joint-target reference
-  - Applies a per-joint PD controller (stiffer on hips and ankles, lighter on arms — common pattern for hold-pose stability)
+  - Applies a per-joint PD controller — an initial gain set with stiffer hips and ankles, lighter arms (the common starting point for hold-pose stability; expect to retune)
   - Steps at 1 ms timestep with `implicitfast` integrator
   - Logs sensors at 200 Hz
-- Runs headless, prints the final base height and orientation drift (close to zero if the controller is tuned), and notes any contact issues
+- Runs headless, prints the final base height and orientation drift, and notes any contact issues
+
+<Note>
+  Static stability of a 19-DOF biped on PD is sensitive to gains. If the H1 collapses on the first run, that's normal — see the gotchas at the bottom for the usual fixes.
+</Note>
 
 ## What ends up on disk
 
@@ -49,9 +53,9 @@ your-project/
 open h1_scene.xml in the MuJoCo viewer
 ```
 
-The H1 stands at the default pose — feet flat on the floor, knees slightly bent, arms by the sides. The IMU log shows the base orientation steady within a few mrad. The torque trace shows the static hold-pose torques on the hips and ankles where most of the gravity load lives.
+If the gains are well-tuned, the H1 stands at the default pose — feet flat on the floor, knees slightly bent, arms by the sides — with IMU orientation steady within a few mrad. The torque trace shows the static hold-pose torques on the hips and ankles where most of the gravity load lives.
 
-If you push the robot in the viewer (drag with the right mouse button), it should resist and settle back without falling — that's the controller working.
+Push the robot in the viewer (drag with the right mouse button): a well-tuned controller resists and settles back; an under-tuned one folds. If it folds, the gotchas below cover the fix.
 
 ## Iterating from here
 
