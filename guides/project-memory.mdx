@@ -1,0 +1,157 @@
+---
+title: "Project Memory (DRIFT.md)"
+description: "Teach Drift your project once with a DRIFT.md so you stop re-explaining it on every command"
+---
+
+The single biggest difference between an AI tool that gets in your way and one that earns its keep is **what it remembers about your project**. Drift's answer is a plain markdown file at your workspace root: `DRIFT.md`.
+
+Anything you put in `DRIFT.md` — robot specs, topic names, frame_ids, build flags, naming rules, your team's quirks — gets pulled in before every prompt. You write it once. The agent stops asking.
+
+<Note>
+  Already keep a `CLAUDE.md` for Claude Code or Cursor? Drift reads that automatically too. No migration needed; you can have both in the same workspace.
+</Note>
+
+## Bootstrap with `/init`
+
+From inside the `drift>` prompt in your project directory:
+
+```drift
+/init
+```
+
+Drift scans the workspace (URDF / MJCF / SDF, package.xml files, launch scripts, READMEs, existing source) and writes a starter `DRIFT.md` at the project root with:
+
+- A summary of the robot and the project
+- Detected ROS2 packages and dependencies
+- Build and launch conventions
+
+Open it. Edit it. The starter is meant to be edited — that's where you put your team's specific knowledge.
+
+## What to put in `DRIFT.md`
+
+A good `DRIFT.md` answers questions the agent would otherwise have to ask (or guess):
+
+### Robot description
+```markdown
+## Robot
+- Name: warehouse_bot
+- Type: 4-wheel differential drive, 2-DOF arm on chassis
+- Workspace path: ~/dev/warehouse_bot_ws
+- Description package: warehouse_bot_description
+- URDF entry point: urdf/warehouse_bot.urdf.xacro
+```
+
+### Topic and frame conventions
+```markdown
+## ROS2 conventions
+- Velocity command topic: /warehouse_bot/cmd_vel  (NOT /cmd_vel)
+- Odometry topic: /warehouse_bot/odom
+- Base frame: warehouse_bot/base_link  (we prefix everything)
+- Map frame: map
+- Lidar frame: warehouse_bot/lidar_link
+```
+
+### Build flags / launch quirks
+```markdown
+## Build
+- ROS2 distro: Humble
+- Build: `colcon build --symlink-install --packages-up-to warehouse_bot`
+- Do NOT build `warehouse_bot_msgs` from source — comes from apt
+- Launch entry: `ros2 launch warehouse_bot_bringup full_stack.launch.py`
+```
+
+### Naming rules
+```markdown
+## Naming
+- Packages use snake_case, no `_pkg` suffix
+- Launch files use `<purpose>.launch.py` (e.g. `nav.launch.py`)
+- Custom messages live in warehouse_bot_msgs only
+```
+
+### Don't-do list
+```markdown
+## Constraints (things to NOT touch)
+- Never edit `urdf/legacy_arm.urdf` — it's deprecated, ignore it
+- Hardware controllers come from `warehouse_bot_hw`, never write new ones from scratch
+- Don't add `joint_state_publisher_gui` to launch files — we use `joint_state_publisher` (no GUI)
+```
+
+The pattern: write the things you would explain to a new teammate on day one.
+
+## What Drift does with it
+
+On every prompt, Drift loads `DRIFT.md` and treats it as ground truth:
+
+- File creation respects your naming rules.
+- Launch file modifications use your topic names and frames.
+- Build commands respect your flags.
+- Suggestions reference your specific packages and files, not generic defaults.
+
+So when you ask:
+
+```drift
+add a lidar to my robot and bridge it to ROS2
+```
+
+Drift writes the bridge entry as `/warehouse_bot/scan` (your convention), not `/scan` (the default). It updates `warehouse_bot.urdf.xacro` (your entry point), not a new file. It uses your build command.
+
+## CLAUDE.md, DRIFT.md, AGENTS.md — which one?
+
+All three are read. You can use any of them. If multiple exist, all are merged.
+
+- **`CLAUDE.md`** — if you already use Claude Code / Cursor in this workspace
+- **`AGENTS.md`** — the OpenAI Codex convention
+- **`DRIFT.md`** — the Drift convention; `/init` writes this one
+
+If you maintain a `CLAUDE.md` for another tool, you can keep it. Drift will use it on top of any `DRIFT.md` you add.
+
+## Where Drift looks for context files
+
+Drift walks up from your current directory looking for these files:
+
+1. The current working directory (your project root)
+2. Parent directories, up to your home directory
+
+So if you have a `~/dev/robots/CLAUDE.md` with org-wide conventions and a `~/dev/robots/warehouse_bot/DRIFT.md` with project-specific notes, both apply when you're inside `warehouse_bot`. The closer file wins on conflicts.
+
+## Editing `DRIFT.md` mid-session
+
+`DRIFT.md` is re-read at the start of every prompt. So if you notice the agent guessing wrong on something:
+
+1. Press `ESC` to pause.
+2. Open `DRIFT.md` in another terminal.
+3. Add the missing rule (e.g. "Always use `colcon build --symlink-install`").
+4. Save.
+5. Resume the prompt — the next step will use the new rule.
+
+You're teaching the agent live. No restart, no re-prompt.
+
+## Anti-patterns
+
+Things that hurt more than help:
+
+- **Don't dump the entire codebase as text.** Drift already reads the files. `DRIFT.md` is for *rules, conventions, constraints* — not code.
+- **Don't put secrets in it.** It's a regular markdown file; treat it like one.
+- **Don't make it generic.** "Use clean code" / "follow best practices" adds nothing. Specific is the point.
+- **Don't make it long for its own sake.** A focused 80-line `DRIFT.md` outperforms a 600-line wall of text.
+
+## Verifying it's being used
+
+After editing, run a small probe prompt:
+
+```drift
+what's my workspace path and what's the cmd_vel topic for this robot?
+```
+
+The agent's answer should match what you wrote in `DRIFT.md`. If it doesn't, check the file is at the project root (not in a subdir) and re-run.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
+    Skills are the team-procedure equivalent of project memory — write a procedure once, Drift uses it.
+  </Card>
+  <Card title="Your First Simulation" icon="play" href="/guides/first-simulation">
+    Walk through a full pick-and-place build with project memory active from step one.
+  </Card>
+</CardGroup>

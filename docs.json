@@ -51,7 +51,10 @@
         "group": "Guides",
         "pages": [
           "guides/first-simulation",
-          "guides/manipulator-rviz"
+          "guides/manipulator-rviz",
+          "guides/mujoco-scene",
+          "guides/project-memory",
+          "guides/skills"
         ]
       },
       {

@@ -10,27 +10,38 @@ description: "Supported platforms, dependencies, and compatibility for Drift CLI
 | **Operating System** | Ubuntu 20.04+ (Debian-based distributions) |
 | **Architecture** | x86_64 (amd64) |
 | **ROS Version** | ROS2 Humble (LTS) or Jazzy recommended; Foxy is EOL and unsupported |
-| **Simulator** | Gazebo Sim (Harmonic) |
+| **Simulators** | Gazebo Sim (Harmonic), MuJoCo 3.8.1+ |
 
 <Note>
-ROS2 Foxy reached end-of-life in June 2023. It may work with Drift but is not tested or supported. Use Humble or Jazzy for a supported experience. Support for additional ROS and Gazebo versions is on the roadmap.
+ROS2 Foxy reached end-of-life in June 2023. It may work with Drift but is not tested or supported. Use Humble or Jazzy for a supported experience. Support for additional ROS distributions is on the roadmap.
 </Note>
 
 ## Dependencies
 
-Drift CLI requires the following to be installed on your system:
+Drift CLI works with the simulator + framework combinations below. You need at least one path installed — most users have both.
 
-### ROS2
+### ROS2 + Gazebo Harmonic path
 
-Drift works with ROS2 distributions. Recommended: **ROS2 Humble** (LTS).
+For traditional ROS2 workflows: URDF / SDF, launch files, controllers, RViz, bridge to Gazebo Harmonic.
 
-Install ROS2 Humble on Ubuntu: [official install guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html) or ask Drift to install it after launching.
+Install ROS2 Humble on Ubuntu: [official install guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html) — or ask Drift to install it after first launch:
 
-### Gazebo Sim
+```drift
+install ROS2 Humble and Gazebo Harmonic, then verify they work
+```
 
-Drift uses **Gazebo Sim (Harmonic)** for simulation rendering and physics.
+Install Gazebo Harmonic: [official install guide](https://gazebosim.org/docs/harmonic/install_ubuntu).
 
-Install Gazebo Harmonic: [official install guide](https://gazebosim.org/docs/harmonic/install_ubuntu) or ask Drift to install it after launching.
+### MuJoCo path
+
+For fast headless / scriptable simulation: MJCF, Python control loops, contact-rich tasks, RL training.
+
+```bash
+pip install mujoco
+python3 -c "import mujoco; print(mujoco.__version__)"
+```
+
+Drift expects MuJoCo 3.8.1 or newer. The Python passive viewer (`mujoco.viewer.launch_passive`) works on Linux with a working display.
 
 ### Additional Tools
 
@@ -38,24 +49,27 @@ Install Gazebo Harmonic: [official install guide](https://gazebosim.org/docs/har
 Drift works in any terminal, including the integrated terminal in **VS Code** or **Cursor** with no extra setup.
 </Note>
 
-Drift relies on standard ROS2 build tools that come with a typical ROS2 installation:
+If you take the ROS2 path, the standard ROS2 build tools come with a typical install:
 
-- `colcon` Build tool for ROS2 workspaces
-- `rosdep` Dependency management for ROS2 packages
+- `colcon` — build tool for ROS2 workspaces
+- `rosdep` — dependency management for ROS2 packages
 
 ## Verifying Your Setup
 
-After installing ROS2 and Gazebo, verify everything is working:
+After installing, verify everything is reachable:
 
 ```bash
-# Check ROS2
+# Check ROS2 (if using the ROS2 path)
 ros2 --version
 
-# Check Gazebo
+# Check Gazebo (if using the Gazebo path)
 gz sim --version
+
+# Check MuJoCo (if using the MuJoCo path)
+python3 -c "import mujoco; print(mujoco.__version__)"
 
 # Check Drift
 drift --help
 ```
 
-If all three commands return version information, you're ready to go.
+If the ones you care about return version information, you're ready to go.
