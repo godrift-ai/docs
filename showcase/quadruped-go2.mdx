@@ -1,0 +1,158 @@
+---
+title: "Quadruped — Unitree Go2"
+description: "Set up a Unitree Go2 standing demo on a stairs scene in one prompt"
+---
+
+Drift treats the open MuJoCo model collection ([google-deepmind/mujoco_menagerie](https://github.com/google-deepmind/mujoco_menagerie)) as first-class. Instead of authoring a Go2 from scratch (you don't want that — the Menagerie model is battle-tested with correct inertias, joint limits, and friction tuning), Drift composes your scene, controllers, sensors, and logging *around* the Menagerie XML.
+
+This guide walks through a one-prompt Go2 standing demo on a small staircase.
+
+<Info>
+  Recommended setup: MuJoCo 3.8.1+, Python 3.10+. Drift can clone Menagerie for you on the first run if it isn't on disk yet.
+</Info>
+
+## The prompt
+
+```drift
+clone mujoco_menagerie if I don't have it, set up a scene with the
+Unitree Go2 from menagerie standing on flat terrain with three 0.1m
+stairs in front of it, write a Python control loop that holds the
+default standing keyframe with PD on every joint, run 5 seconds
+headless, and log joint positions, IMU, and foot-contact forces to
+sensor_log.csv
+```
+
+From this single prompt, Drift:
+
+- Clones (or locates) `mujoco_menagerie` in `~/dev/mujoco_menagerie` if not already present
+- Composes `go2_scene.xml` that `<include>`s the Menagerie Go2 model and adds the floor + 3-step staircase
+- Picks a sensible spawn pose so the robot's feet rest on the ground without penetration
+- Writes a `run_sim.py` that loads the keyframe, applies PD control on all 12 joints, steps the sim for 5 seconds, and logs sensors at 100 Hz
+- Runs the sim, prints the final base pose and any contact issues
+- Drops a `DRIFT.md` summarising the scene, the controller, and what to tune next
+
+## What ends up on disk
+
+```
+your-project/
+├── go2_scene.xml          # the scene XML: floor + staircase + Menagerie include
+├── run_sim.py             # PD hold-pose control loop + CSV logger
+├── sensor_log.csv         # 500 rows: 12 joint pos, IMU accel/gyro, 4 foot contacts
+└── DRIFT.md               # what Drift built + what to iterate on
+```
+
+`go2_scene.xml` is intentionally short — most of the model is referenced from Menagerie:
+
+```xml
+<mujoco model="go2_demo">
+  <include file="/home/you/dev/mujoco_menagerie/unitree_go2/go2.xml"/>
+  <worldbody>
+    <light pos="0 0 4" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="5 5 0.1" material="grid"/>
+    <!-- staircase -->
+    <geom name="step_1" type="box" pos="1.0 0 0.05" size="0.20 0.50 0.05"/>
+    <geom name="step_2" type="box" pos="1.4 0 0.10" size="0.20 0.50 0.10"/>
+    <geom name="step_3" type="box" pos="1.8 0 0.15" size="0.20 0.50 0.15"/>
+  </worldbody>
+</mujoco>
+```
+
+This is the right pattern: a thin scene file that includes a curated robot model, plus only the bits your work actually needs.
+
+## What the viewer shows
+
+Open it interactively:
+
+```drift
+open go2_scene.xml in the MuJoCo viewer
+```
+
+You'll see the Go2 standing in default pose facing the staircase, joints held by the PD controller. The CSV next to it shows the IMU steady, joint positions near the keyframe targets, and foot contact forces ≈ body weight / 4 on each leg.
+
+## Iterating from here
+
+Each follow-up triggers only what's needed — no full rebuilds:
+
+```drift
+slope the staircase to 15 degrees instead of fixed steps
+add a 2kg payload on the Go2's back at body position (0, 0, 0.08)
+log the contact normal angles too, not just the force magnitudes
+swap the PD gains for joint-specific values: hips Kp=200, thighs Kp=300, calves Kp=150
+add a camera at the Go2's "head" position and write a 30fps RGB ringbuffer to disk
+write a ROS2 bridge so /go2/joint_states publishes the joint angles at 100Hz
+```
+
+## Honest scope
+
+Things this guide does:
+- Compose the scene around the Menagerie Go2 model
+- Write a PD hold-pose controller
+- Wire IMU + contact + joint sensors and log them
+- Open the viewer / run headless
+
+Things this guide does **not** do:
+- Learned locomotion (trot, gallop, recovery from a push) — those are policies you train; Drift can scaffold the training environment but not the policy itself
+- Real-world deployment to a physical Go2 — Drift focuses on simulation
+- Reactive contact-aware planning — the controller here is pose-hold, not a footstep planner
+
+If you have a policy in `.pt` or `.onnx` form, ask Drift to wire it in:
+
+```drift
+load /path/to/go2_walking_policy.onnx and step it every 20ms,
+feeding joint position + velocity + IMU as the observation,
+outputting target joint positions for the PD controller
+```
+
+That's a real bridge Drift will build — your policy, our wiring.
+
+## Common gotchas
+
+<AccordionGroup>
+  <Accordion title="`mujoco_menagerie` clone path not picked up">
+    Drift defaults to looking in `~/dev/mujoco_menagerie` and `~/mujoco_menagerie`. If yours lives elsewhere, tell it once:
+
+    ```drift
+    my mujoco_menagerie is at /opt/models/mujoco_menagerie — use that path
+    ```
+
+    Then add a line in `DRIFT.md`:
+
+    ```markdown
+    ## Models
+    - MuJoCo Menagerie path: /opt/models/mujoco_menagerie
+    ```
+
+    Every future prompt picks that up automatically.
+  </Accordion>
+
+  <Accordion title="Robot tips over on first step">
+    The default keyframe in Menagerie is calibrated for a flat ground spawn. If you put the Go2 on top of a staircase step rather than at its base, the static pose isn't stable. Either:
+    - Spawn position at `(0, 0, 0.30)` (in front of the stairs) — what this guide does
+    - Or ask Drift to compute a per-step stable stance for the staircase case
+
+    Tell Drift the symptom: `"the Go2 tips backward in the first 200ms"` — it'll walk the diagnosis.
+  </Accordion>
+
+  <Accordion title="Foot contact forces are zero">
+    Two usual causes — Drift will check both:
+    - Contact between Go2 feet and the floor is excluded by a `<contact><exclude.../></contact>` block somewhere — common when including a Menagerie scene file rather than the bare model.
+    - The contact sensor names changed between Menagerie revisions. Pin a version in `DRIFT.md` to avoid surprises.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Dual-arm Aloha" icon="robot" href="/showcase/dual-arm-aloha">
+    Tabletop bimanual demo
+  </Card>
+  <Card title="Humanoid H1" icon="person-walking" href="/showcase/humanoid-h1">
+    Standing pose demo with PD control on 19 joints
+  </Card>
+  <Card title="Building a MuJoCo Scene" icon="cube" href="/guides/mujoco-scene">
+    The base MuJoCo guide — useful background for everything in Showcase
+  </Card>
+  <Card title="Project Context" icon="brain" href="/guides/project-context">
+    Pin your Menagerie path and conventions so every prompt is consistent
+  </Card>
+</CardGroup>

@@ -148,10 +148,13 @@ At the `drift>` prompt, describe what you want in plain English:
   </Tab>
   <Tab title="MuJoCo">
     ```drift
-    build a 4-wheel mobile robot in MuJoCo with an IMU at chassis center,
-    drop it in a 5×5m floor scene, drive it forward 5 seconds, and log
-    IMU + chassis pose to a CSV
+    set up a Unitree Go2 from mujoco_menagerie on a flat floor scene,
+    write a PD controller that holds the default standing keyframe on
+    all 12 joints, run 5 seconds headless, and log joint positions,
+    IMU, and foot contacts to a CSV
     ```
+
+    Drift will clone Menagerie if you don't have it. See the [Robot Showcase](/showcase/quadruped-go2) for the full Go2 walkthrough.
   </Tab>
 </Tabs>
 
@@ -250,6 +253,9 @@ Then keep going. Each follow-up triggers only the necessary rebuilds — no star
 ## What's next?
 
 <CardGroup cols={2}>
+  <Card title="Robot Showcase" icon="paw" href="/showcase/quadruped-go2">
+    Full walkthroughs with Unitree Go2, Aloha, and Unitree H1
+  </Card>
   <Card title="Your First Simulation" icon="play" href="/guides/first-simulation">
     A detailed walkthrough of building a complete simulation from scratch
   </Card>
@@ -258,9 +264,6 @@ Then keep going. Each follow-up triggers only the necessary rebuilds — no star
   </Card>
   <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
     Hand your team's expertise to Drift
-  </Card>
-  <Card title="Commands Reference" icon="terminal" href="/reference/commands">
-    Full slash command reference
   </Card>
 </CardGroup>
 

@@ -58,6 +58,14 @@
         ]
       },
       {
+        "group": "Robot Showcase",
+        "pages": [
+          "showcase/quadruped-go2",
+          "showcase/dual-arm-aloha",
+          "showcase/humanoid-h1"
+        ]
+      },
+      {
         "group": "Reference",
         "pages": [
           "reference/commands",
