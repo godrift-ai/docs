@@ -1,0 +1,129 @@
+---
+title: "Dual-arm — Trossen Aloha"
+description: "Set up an Aloha bimanual rig on a tabletop and reach both arms toward objects in one prompt"
+---
+
+The Trossen Aloha is the most-cited open bimanual platform in 2026 manipulation research — easy to recognize, well-documented, and present in [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) with correct joint limits, gripper kinematics, and inertias.
+
+Drift composes the scene, the objects, the dual-arm controller, and the sensor logging around the Menagerie Aloha model.
+
+<Info>
+  Recommended setup: MuJoCo 3.8.1+, Python 3.10+. Drift can clone Menagerie for you on the first run if it isn't on disk yet.
+</Info>
+
+## The prompt
+
+```drift
+set up a Trossen Aloha bimanual scene from mujoco_menagerie on a
+tabletop (1.0×0.6m at z=0.75m), place three 0.05m cubes at
+table-local (0.2, 0.15, 0.025), (0.2, 0, 0.025), (0.2, -0.15, 0.025)
+in red/green/blue, write a Python control loop that moves the left
+end-effector to hover 5cm above the leftmost cube and the right
+end-effector to hover 5cm above the rightmost cube using
+joint-position interpolation from the default keyframe, run 5s
+headless, log both wrists' force/torque (Drift adds the sensor sites
+to the Aloha if they aren't there already) and all 14 joint angles
+```
+
+From this single prompt, Drift:
+
+- Locates or clones `mujoco_menagerie`
+- Composes `aloha_scene.xml` that `<include>`s the Menagerie Aloha and adds the table + three cubes at the requested colors and positions
+- Writes joint-space targets per arm that approximate the wrist hovering over each target cube. The first attempt comes from MuJoCo's forward kinematics — pose, check wrist position, nudge — but it's not a full IK solver and may overshoot or undershoot by a few centimetres. Refine with a follow-up like `"the left wrist is 5cm short — adjust the shoulder-pitch target by +0.1 rad"`.
+- Writes a `run_sim.py` that linearly interpolates between current and target joint angles over 5 seconds, applies position control, and logs at 100 Hz
+- Runs headless, prints the final EE positions vs targets, and notes any contact between wrist and table
+
+## What ends up on disk
+
+```
+your-project/
+├── aloha_scene.xml         # table + 3 cubes + Menagerie Aloha include
+├── run_sim.py              # bimanual joint-space interpolation
+├── sensor_log.csv          # 500 rows: 14 joints, 2× F/T sensors
+└── DRIFT.md                # scene summary, target poses, what to iterate on
+```
+
+## What the viewer shows
+
+```drift
+open aloha_scene.xml in the MuJoCo viewer
+```
+
+Both Aloha arms move smoothly from their start pose. The left wrist tracks over the red cube; the right wrist tracks over the blue cube. The middle (green) cube stays untouched. The F/T traces in `sensor_log.csv` are near-zero through the motion (free space) and would spike if the arms touched the table.
+
+## Iterating from here
+
+Where the demo gets interesting is the follow-ups:
+
+```drift
+close both grippers once each EE is over its target cube and lift
+2cm — log gripper force during contact
+add three larger 0.08m cylinders behind the cubes — make the right
+arm reach the rear-right cylinder while the left does the red cube
+add a top-down RGB camera over the center of the table and write
+30fps frames to a video file
+load an inverse kinematics solver and switch the controller to
+Cartesian EE targets instead of joint targets
+swap to Mujoco-MPC and add an end-effector position cost on each arm
+add an Aloha-shaped ROS2 bridge: /aloha/left/joint_states,
+/aloha/right/joint_states, /aloha/left/cmd, /aloha/right/cmd
+```
+
+## Honest scope
+
+Things this guide does:
+- Compose the bimanual scene around the Menagerie Aloha model
+- Write a per-arm joint-space interpolation controller
+- Wire both wrist F/T sensors and the 14 joint angles, log them
+- Open the viewer / run headless
+
+Things this guide does **not** do:
+- A learned bimanual grasp policy (ALOHA Unleashed–style behaviour cloning) — those are policies you train; Drift can scaffold the data-collection environment but not the policy
+- Full collision-aware motion planning between the arms
+- Tactile-sensor-driven manipulation — Aloha's grippers don't carry tactile sensors in the Menagerie model
+
+If you have a policy from a training run, ask Drift to wire it in:
+
+```drift
+load /path/to/aloha_cube_grasp_policy.onnx and run it at 50Hz,
+feeding joint positions + RGB camera images as observation,
+outputting target joint positions for both arms
+```
+
+## Common gotchas
+
+<AccordionGroup>
+  <Accordion title="Cubes fall through the table">
+    The table needs `condim=3` (or higher) on its contact and a non-zero friction. The default plane material in some Menagerie scenes is frictionless. Tell Drift `"the cubes fall through the table — make the table-cube contact realistic"` and it'll fix the `<geom>` block.
+  </Accordion>
+
+  <Accordion title="Arms reach the targets but oscillate at the end">
+    Position-control PD gains are model-specific. Aloha's default `kp` in Menagerie is conservative. Ask Drift to ramp the gains:
+
+    ```drift
+    bump the position-control kp on every Aloha joint to 1.5× and re-run,
+    also damp by 20%
+    ```
+  </Accordion>
+
+  <Accordion title="The right arm's reach overshoots">
+    Aloha's right arm has a different joint convention than the left in the original ROS package — but Menagerie normalises this. If you see overshoot only on one side, double-check the sign convention in your interpolation. Drift will catch this if you ask `"why is the right arm overshooting"`.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quadruped Go2" icon="paw" href="/showcase/quadruped-go2">
+    Locomotion-shaped showcase
+  </Card>
+  <Card title="Humanoid H1" icon="person-walking" href="/showcase/humanoid-h1">
+    Full-body PD-balanced demo
+  </Card>
+  <Card title="Building a MuJoCo Scene" icon="cube" href="/guides/mujoco-scene">
+    The base MuJoCo guide — useful background for everything in Showcase
+  </Card>
+  <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
+    Capture your manipulation conventions (IK solver pick, gripper-force rules) as a skill
+  </Card>
+</CardGroup>

@@ -7,7 +7,7 @@ description: "System requirements and how to install Drift CLI"
 
 Before installing, make sure your system meets the requirements. See the full [System Requirements](/reference/system-requirements) page for details, supported platforms, and dependency installation instructions.
 
-**In brief:** Ubuntu 20.04+, x86_64, ROS2 Humble or Jazzy, Gazebo Sim (Harmonic).
+**In brief:** Ubuntu 20.04+, x86_64, and at least one simulator path — ROS2 Humble or Jazzy + Gazebo Sim (Harmonic), or MuJoCo 3.8.1+ via `pip install mujoco`.
 
 ## Quick Install (Recommended)
 
@@ -41,7 +41,7 @@ If you prefer to install manually or the quick install doesn't work for your set
 2. Install with `dpkg`:
 
 ```bash
-sudo dpkg -i drift-cli_1.0.15_amd64.deb
+sudo dpkg -i drift-cli_*_amd64.deb
 ```
 
 3. To start, run:

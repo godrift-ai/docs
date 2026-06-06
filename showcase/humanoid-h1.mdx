@@ -1,0 +1,142 @@
+---
+title: "Humanoid — Unitree H1"
+description: "Set up a Unitree H1 humanoid holding a balanced standing pose on flat ground"
+---
+
+The Unitree H1 is one of the most accessible bipeds in research right now, with a [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) model that includes correct mass distribution, joint limits, and a tuned default standing keyframe.
+
+This guide does **not** train a walking policy — that's a research project on its own. What it does is everything you need *around* a walking policy or before you have one: scene, balanced PD hold-pose, full sensor wiring, viewer launch, ROS2 bridging on request.
+
+<Info>
+  Recommended setup: MuJoCo 3.8.1+, Python 3.10+. Drift can clone Menagerie for you on the first run if it isn't on disk yet.
+</Info>
+
+## The prompt
+
+```drift
+set up a Unitree H1 from mujoco_menagerie standing on flat ground,
+write a PD controller that holds the default standing keyframe on
+all 19 joints with stiff hips and ankles, run 5 seconds headless,
+and log IMU accel + gyro, base position + orientation, and all 19
+joint angles + torques to sensor_log.csv
+```
+
+From this prompt — and a tuning follow-up or two, since humanoid PD stability is gain-sensitive — Drift:
+
+- Asks where `mujoco_menagerie` lives, or clones it to a path you confirm
+- Composes `h1_scene.xml` that `<include>`s the Menagerie H1 and adds a 10×10m floor
+- Spawns the H1 at the default keyframe's qpos so the feet rest cleanly on the ground
+- Writes a `run_sim.py` that:
+  - Loads the H1 keyframe pose as the joint-target reference
+  - Applies a per-joint PD controller — an initial gain set with stiffer hips and ankles, lighter arms (the common starting point for hold-pose stability; expect to retune)
+  - Steps at 1 ms timestep with `implicitfast` integrator
+  - Logs sensors at 200 Hz
+- Runs headless, prints the final base height and orientation drift, and notes any contact issues
+
+<Note>
+  Static stability of a 19-DOF biped on PD is sensitive to gains. If the H1 collapses on the first run, that's normal — see the gotchas at the bottom for the usual fixes.
+</Note>
+
+## What ends up on disk
+
+```
+your-project/
+├── h1_scene.xml            # floor + Menagerie H1 include
+├── run_sim.py              # full-body PD hold-pose + sensor logger
+├── sensor_log.csv          # 1000 rows: IMU, base pose, 19 joints (pos + torque)
+└── DRIFT.md                # scene summary, gains used, what to iterate
+```
+
+## What the viewer shows
+
+```drift
+open h1_scene.xml in the MuJoCo viewer
+```
+
+If the gains are well-tuned, the H1 stands at the default pose — feet flat on the floor, knees slightly bent, arms by the sides — with IMU orientation steady within a few mrad. The torque trace shows the static hold-pose torques on the hips and ankles where most of the gravity load lives.
+
+Push the robot in the viewer (drag with the right mouse button): a well-tuned controller resists and settles back; an under-tuned one folds. If it folds, the gotchas below cover the fix.
+
+## Iterating from here
+
+This is where the real work starts:
+
+```drift
+add a small perturbation: apply a 30N forward push to the H1's
+torso at t=2s for 50ms, see if it recovers
+add stairs in front of the H1 and have it step forward onto the
+first step (lift right foot, plant, shift weight)
+load an MPC walking controller from /path/to/h1_mpc and bridge it
+to the joint targets — log the contact schedule and CoM trajectory
+add a head-mounted RGB camera and stream 30fps frames
+write a ROS2 bridge: publish /h1/joint_states, /h1/imu, /h1/base_pose
+and subscribe to /h1/joint_cmd for external controllers
+load /path/to/h1_walking_policy.onnx and step it every 20ms,
+feeding the standard humanoid observation (joint pos + vel + IMU +
+base height), outputting target joint positions
+```
+
+## Honest scope
+
+Things this guide does:
+- Compose the scene around the Menagerie H1 model
+- Write a full-body PD hold-pose controller (stiff hips/ankles, lighter arms)
+- Wire IMU + base pose + 19-joint sensors and log them
+- Open the viewer / run headless
+
+Things this guide does **not** do (and will not pretend to):
+- Bipedal walking — even "in place" walking is non-trivial; you need a controller (MPC, learned policy, or a reference trajectory tracker), not Drift
+- Push recovery beyond what hold-pose PD naturally absorbs
+- Whole-body control with operational-space inverse dynamics — Drift can scaffold the controller skeleton but the math is yours
+- Sim-to-real — H1 sim parameters are good but not identical to hardware
+
+The honest framing: this guide gets you to *a stable platform you can plug your controller into*. The "wow" moments — push recovery, walking, getting up — come from the controller you add, not from this scene file.
+
+## Common gotchas
+
+<AccordionGroup>
+  <Accordion title="H1 collapses immediately on first step">
+    Almost always one of:
+    - Keyframe wasn't loaded — `mj_resetDataKeyframe` call missing in the run script.
+    - PD gains too low for hip flexion / knees. The Menagerie default ranges can vary by revision; ask Drift `"the H1 is collapsing — tune the hip and knee gains for static stability"`.
+    - Floor friction is too low (humanoids slip more than quadrupeds). `condim=3` on the floor, friction ≥ 1.0.
+  </Accordion>
+
+  <Accordion title="Pose drifts by a few degrees over 5s but doesn't fall">
+    Expected with pure PD on a model with no integral term. Either:
+    - Accept the drift (often fine for testing)
+    - Switch to PID by adding small `Ki` integral terms — ask Drift to do this
+    - Use the Mujoco-MPC reference controller if you have it
+  </Accordion>
+
+  <Accordion title="Joint torque limits exceeded warnings">
+    Stiff PD on a 19-DOF humanoid will saturate some joints in the first few timesteps as the controller "catches" the system. If the warnings stop after ~0.1s, the system is fine. If they persist, lower your `kp` or check the keyframe is actually loaded as the target (not zero).
+  </Accordion>
+
+  <Accordion title="The H1 is facing the wrong way / spawned wrong">
+    The default Menagerie spawn is at `qpos[3:7] = (1, 0, 0, 0)` (identity quaternion, facing +X). If you want it facing a different direction, ask:
+
+    ```drift
+    spawn the H1 facing -Y instead of +X
+    ```
+
+    and Drift will compute the right quaternion.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quadruped Go2" icon="paw" href="/showcase/quadruped-go2">
+    Quadruped showcase — easier locomotion baseline
+  </Card>
+  <Card title="Dual-arm Aloha" icon="robot" href="/showcase/dual-arm-aloha">
+    Manipulation showcase
+  </Card>
+  <Card title="Building a MuJoCo Scene" icon="cube" href="/guides/mujoco-scene">
+    The base MuJoCo guide
+  </Card>
+  <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
+    Capture your humanoid stack's conventions (gain rules, contact tuning) as a skill so every prompt uses them
+  </Card>
+</CardGroup>

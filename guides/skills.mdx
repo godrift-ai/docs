@@ -1,0 +1,168 @@
+---
+title: "Custom Skills"
+description: "Drop your team's procedures into a markdown file. Drift picks them up and uses them."
+---
+
+A **skill** is a markdown file that captures how *your team* does a specific thing — tuning an EKF, calibrating an IMU, writing a Gazebo plugin, structuring a launch file, picking damping values for a wheel. Drop it in the right place and Drift uses it automatically, without you copy-pasting the procedure into every prompt.
+
+If `DRIFT.md` is "what is true about this project", skills are "how do we do specific things around here".
+
+## Adding a skill
+
+The fastest way:
+
+```drift
+/skill add ./team-docs/ekf-tuning.md
+```
+
+This copies the file to `~/.drift/skills/<name>/SKILL.md` and registers it as a **user-global** skill — active in every workspace on this machine.
+
+To install it as a **project-scoped** skill instead (lives inside your repo, ships when you commit it):
+
+```drift
+/skill add ./team-docs/ekf-tuning.md --repo
+```
+
+That copies the file to `<repoRoot>/.drift/skills/<name>/SKILL.md` so anyone who clones the repo picks it up automatically.
+
+Or in plain English at the prompt:
+
+```drift
+add this skill: ./team-docs/ekf-tuning.md
+```
+
+Drift validates the file, copies it into the right managed location, distils it (so the agent has a fast lookup index), and confirms which prompt categories it'll trigger on (build, simulation, robot description, debugging, etc.).
+
+<Note>
+  **A loose `skills.md` in your workspace root is not picked up.** The convention is one directory per skill, with the file literally named `SKILL.md` inside it (e.g. `<repo>/.drift/skills/ekf-tuning/SKILL.md`). `/skill add <path>` does the directory-and-rename housekeeping for you.
+</Note>
+
+## What goes in a `SKILL.md`
+
+A skill has a short YAML front-matter block plus the actual procedure as markdown:
+
+```markdown
+---
+name: ekf-tuning
+description: How we tune an Extended Kalman Filter for our differential-drive robots
+applies_to:
+  - SIMULATION
+  - ROBOT_DESCRIPTION
+---
+
+# EKF Tuning for differential-drive robots
+
+## Default starting params
+- process_noise_covariance: diag([0.05, 0.05, 0.06, 0.03, 0.03, 0.06])
+- initial_estimate_covariance: diag([1e-9] * 15)
+- Use `imu0` and `odom0` only — never fuse a third source on first pass
+
+## When the estimate drifts during straight-line motion
+1. Check the IMU bias estimation is converging (`/diagnostics`)
+2. Bump `process_noise_covariance[5]` (yaw) by 1.5×
+3. If still drifting, the wheel-odometry covariance is too tight — relax 2×
+
+## Coordinate frame conventions
+- Always REP-105: `map -> odom -> base_link`
+- Never publish `map -> base_link` directly
+```
+
+The front-matter helps Drift decide when the skill is relevant (`applies_to` is a list of categories — Drift will load the skill for prompts that match). The body is plain markdown; write it the way you'd explain it to a new hire.
+
+## Listing and removing
+
+```drift
+/skill list
+```
+
+Shows every skill currently active for this workspace, plus where it was discovered from (workspace-local or user-global).
+
+```drift
+/skill remove ekf-tuning
+```
+
+Drops the skill. The file is moved out of the active path; the agent stops using it on the next prompt.
+
+## Sharing skills across the team
+
+Two patterns work well:
+
+### Pattern 1: skills in the project repo
+Commit `.drift/skills/` under your project repo. Anyone who clones the project gets your skills automatically:
+
+```
+warehouse_bot/
+├── DRIFT.md
+├── .drift/
+│   └── skills/
+│       ├── ekf-tuning/SKILL.md
+│       └── gazebo-plugin/SKILL.md
+├── src/
+└── ...
+```
+
+`/skill add <path> --repo` installs into exactly this layout. If your team already keeps skills in `.claude/skills/` (Claude Code convention), Drift reads those too — see the compat note below.
+
+This is the right pattern for project-specific procedures.
+
+### Pattern 2: skills in a dedicated team repo
+Keep a separate `team-skills` repo. Each developer runs:
+
+```bash
+git clone git@github.com:your-team/team-skills.git ~/team-skills
+```
+
+Then in Drift:
+
+```drift
+/skill add ~/team-skills/ekf-tuning.md
+/skill add ~/team-skills/launch-conventions.md
+```
+
+This is the right pattern for cross-project conventions (build flags, launch-file structure, naming rules).
+
+### Claude Code compat
+
+If you already use Claude Code or Cursor and keep skills in `.claude/skills/<name>/SKILL.md`, Drift reads those too. Both `.drift/skills/` (the Drift-native location) and `.claude/skills/` (the Claude Code convention) are scanned in user-global (`~/.{drift,claude}/skills/`) and project (`<repoRoot>/.{drift,claude}/skills/`) scopes. You don't have to migrate; the agent will pick up whichever you have. `/skill add` always copies into `.drift/skills/` so the install path is unambiguous.
+
+## Examples of skills worth writing
+
+Things our users have written skills for:
+
+- **EKF / UKF tuning** — process noise, observation models, fallback ladders
+- **Launch-file conventions** — how to structure `main.launch.py` vs `bringup.launch.py`
+- **URDF practices** — inertia formulas, collision-geometry rules, joint-naming convention
+- **MJCF conventions** — chassis-z spawn rules, wheel friction/condim defaults, integrator picks
+- **Build / colcon discipline** — packages-up-to flags, symlink-install rule, what's vendored
+- **Gazebo plugin authoring** — how your team writes a sensor plugin
+- **Topic-naming conventions** — prefix rules, namespacing, what's published where
+- **Hardware bring-up** — how a new robot is brought online for the first time
+
+Anything that takes more than two sentences to explain to a new teammate is a candidate.
+
+## Don't put in a skill
+
+- **Code.** Skills are procedures, not source. The agent already reads your code.
+- **One-off fixes.** A note on something that happened once doesn't belong in a skill — it's noise.
+- **Things that change weekly.** Skills should be relatively stable. For volatile state, just say it in the prompt.
+- **Secrets.** Plain markdown file; treat accordingly.
+
+## Combining skills with project context
+
+`DRIFT.md` and skills work together:
+
+- `DRIFT.md` says *"our cmd_vel topic is `/warehouse_bot/cmd_vel`"*.
+- A skill says *"to debug a wheel that doesn't turn, check: 1. topic connection, 2. controller chain, 3. PID gains, 4. URDF axis alignment"*.
+
+`DRIFT.md` is facts. Skills are procedures. The agent gets both, in the right contexts, automatically.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Project Context" icon="brain" href="/guides/project-context">
+    The companion file format — facts about your project.
+  </Card>
+  <Card title="Commands Reference" icon="terminal" href="/reference/commands">
+    Full `/skill` subcommand reference.
+  </Card>
+</CardGroup>

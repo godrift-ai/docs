@@ -7,14 +7,14 @@ description: "Go from zero to a running robotics simulation in under 5 minutes"
 
 <Tabs>
   <Tab title="Ubuntu (Native)">
-    Running Ubuntu natively on an x86\_64 machine is the recommended setup for best performance for Gazebo rendering and ROS2.
+    Running Ubuntu natively on an x86_64 machine is the recommended setup for best performance.
 
     **Supported versions:**
     - Ubuntu 20.04 (Focal)
-    - Ubuntu 22.04 (Jammy)- recommended
+    - Ubuntu 22.04 (Jammy) — recommended
     - Ubuntu 24.04 (Noble)
 
-    Use your system terminal (GNOME Terminal, Konsole, or any terminal emulator), or the integrated terminal in VS Code or Cursor without any additional setup.
+    Use your system terminal (GNOME Terminal, Konsole, any terminal emulator), or the integrated terminal in VS Code or Cursor.
   </Tab>
 
   <Tab title="macOS (via VMware)">
@@ -22,20 +22,18 @@ description: "Go from zero to a running robotics simulation in under 5 minutes"
 
     **Setup steps:**
     1. Download and install [VMware Fusion](https://www.vmware.com/products/fusion.html) (free for personal use)
-    2. Create a new VM with **Ubuntu 22.04** (x86\_64 image)
-    3. Allocate at least **8GB RAM** and **4 CPU cores** for Gazebo to run smoothly
-    4. Install ROS2 and Gazebo inside the VM following the official guides
+    2. Create a new VM with **Ubuntu 22.04** (x86_64 image)
+    3. Allocate at least **8GB RAM** and **4 CPU cores** for the simulator to run smoothly
+    4. Install ROS2 and Gazebo (and/or MuJoCo) inside the VM following the official guides
     5. Follow the Drift install steps below inside the VM terminal
 
     <Note>
-      On Apple Silicon (M1/M2/M3), VMware Fusion runs an ARM Ubuntu image by default. Make sure to select an **x86\_64 Ubuntu image** when creating the VM so Drift's binary is compatible.
+      On Apple Silicon (M1/M2/M3), VMware Fusion runs an ARM Ubuntu image by default. Select an **x86_64 Ubuntu image** when creating the VM so Drift's binary is compatible.
     </Note>
   </Tab>
 </Tabs>
 
 ## Step 1: Install Drift CLI
-
-Run the install script in your terminal:
 
 ```bash
 curl -fsSL https://godrift.ai/install | bash
@@ -57,7 +55,7 @@ drift --help
   Download the latest `.deb` package from the [GitHub Releases page](https://github.com/godrift-ai/drift-releases/releases) and install it with:
 
   ```bash
-  sudo dpkg -i drift-cli_1.0.15_amd64.deb
+  sudo dpkg -i drift-cli_*_amd64.deb
   ```
 
   Then run `drift` to start.
@@ -65,97 +63,125 @@ drift --help
 
 ## Step 2: Launch Drift
 
-Navigate to the directory where you want your project and start Drift:
-
 ```bash
 cd your-project
 drift
 ```
 
-You'll see the Drift welcome screen with an interactive prompt:
+You'll see the welcome screen with an interactive prompt:
 
 ```
 🚀 Welcome to Drift CLI
 
-   Your Copilot for robotics simulations
+   Your copilot for robotics simulations
 
 drift>
 ```
 
-## Step 3: Set up ROS2 and Gazebo with Drift
+First time launching from a fresh directory, Drift will nudge you to run `/init` — that's the project-context bootstrap (see Step 3).
 
-Before creating your first simulation, make sure ROS2 and Gazebo are available:
+## Step 3: Give Drift project context with `/init`
 
-```bash
-ros2 --version
-gazebo --version  # or `gz --version` depending on your install
-```
-
-If they are not installed on the system, ask Drift to install and configure both for you with a prompt:
+The single most useful thing you can do before your first real prompt:
 
 ```drift
-install the latest version and configure ROS2 Humble and Gazebo Harmonic
+/init
 ```
 
-Drift will inspect your environment, install the required packages, and configure your workspace.
+Drift scans your workspace (URDFs, package.xml files, launch scripts, scene files, READMEs) and writes a starter `DRIFT.md` at the project root with:
 
-## Step 4: Build your first simulation
+- A summary of your robot and project
+- Detected ROS2 packages and dependencies
+- Build and launch conventions
 
-At the `drift>` prompt, describe what you want to build in plain English:
+Open it, edit it to taste — add topic names, frame_id conventions, special build flags, your team's naming rules. Every subsequent prompt will use this file as ground truth, so you stop re-explaining your project on every command.
 
-```drift
-create a pick-and-place robot simulation
-```
+<Tip>
+  Already have a `CLAUDE.md` from Cursor / Claude Code? Drift reads that too — no migration needed.
+</Tip>
 
-Drift plans and executes every step, printing progress as it goes:
+## Step 4: Set up your simulator
 
-```
-✔ Planning simulation layout...
-✔ Creating ROS2 workspace at ~/drift_ws
-✔ Generating robot URDF (manipulator arm + gripper)
-✔ Creating Gazebo world with table and pick objects
-✔ Generating launch files
-⟳ Building workspace with colcon...
-✔ Build complete (0 errors)
-✔ Launch files validated
+Pick what you need:
 
-Ready. Run: launch my robot with the world file
-```
+<Tabs>
+  <Tab title="Gazebo Harmonic (for ROS2)">
+    Check what's installed:
 
-<Note>
-  If a build step fails, Drift automatically diagnoses and retries before surfacing the error to you.
-</Note>
+    ```bash
+    ros2 --version
+    gz sim --version
+    ```
 
-## Step 5: Launch the simulation
+    If either is missing, ask Drift to install both:
 
-Once the build completes, launch everything:
+    ```drift
+    install ROS2 Humble and Gazebo Harmonic, then verify they work
+    ```
+  </Tab>
+
+  <Tab title="MuJoCo (for fast, scriptable sims)">
+    MuJoCo is great when you want a fast, headless-friendly simulator that doesn't require ROS2 in the loop — robotics RL training, contact-rich tasks, pure dynamics work.
+
+    ```bash
+    pip install mujoco
+    python3 -c "import mujoco; print(mujoco.__version__)"
+    ```
+
+    Drift supports MuJoCo 3.8.1+. If you don't have it, ask Drift to set it up:
+
+    ```drift
+    install MuJoCo and verify it imports
+    ```
+  </Tab>
+</Tabs>
+
+## Step 5: Build your first simulation
+
+At the `drift>` prompt, describe what you want in plain English:
+
+<Tabs>
+  <Tab title="Gazebo">
+    ```drift
+    create a pick-and-place robot simulation in Gazebo
+    ```
+  </Tab>
+  <Tab title="MuJoCo">
+    ```drift
+    set up a Unitree Go2 from mujoco_menagerie on a flat floor scene,
+    write a PD controller that holds the default standing keyframe on
+    all 12 joints, run 5 seconds headless, and log joint positions,
+    IMU, and foot contacts to a CSV
+    ```
+
+    Drift will clone Menagerie if you don't have it. See the [Robot Showcase](/showcase/quadruped-go2) for the full Go2 walkthrough.
+  </Tab>
+</Tabs>
+
+Drift plans and executes each step, printing progress as it goes. If a build step fails, Drift diagnoses the error and retries before surfacing it to you.
+
+## Step 6: Launch and iterate
+
+Launch the simulation (Gazebo path):
 
 ```drift
 launch my robot with the world file
 ```
 
-Gazebo Sim will open in a new window. You should see a ground plane, a table, pick objects, and your robot arm. Back in the terminal, Drift confirms the running processes:
+Or open the MuJoCo viewer if you took the MuJoCo path:
 
-```
-✔ Launched: robot_state_publisher
-✔ Launched: gazebo (Harmonic)
-✔ Launched: joint_state_broadcaster
-All processes running. Use /ps to view details.
+```drift
+open the scene I built in the MuJoCo viewer
 ```
 
-## Step 6: Iterate and debug
-
-This is where Drift shines. Keep building on what you have and each change triggers only the necessary rebuilds:
-
-For example:
+Then keep going. Each follow-up triggers only the necessary rebuilds — no starting over:
 
 - `add a lidar sensor to my robot and rebuild`
+- `add a second obstacle box at (1, -1) in the scene`
 - `why isn't my camera publishing images?`
 - `show me the running processes`
 
-You don't have to start over. Just describe the next thing you want.
-
-## Pro tips for better results
+## Pro tips
 
 <AccordionGroup>
   <Accordion title="Be specific in your prompts">
@@ -168,13 +194,14 @@ You don't have to start over. Just describe the next thing you want.
     Try:
 
     ```drift
-    create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a depth camera mounted on the wrist
+    create a 6-DOF manipulator arm with a two-finger gripper, a table
+    workspace, and a depth camera mounted on the wrist
     ```
 
-    The more detail you give about the robot type, sensors, environment, and task; the better the output.
+    The more detail about robot type, sensors, environment, and task — the better the output.
   </Accordion>
 
-  <Accordion title="Let Drift explore before making changes">
+  <Accordion title="Let Drift explore before changing things">
     Before modifying a simulation, ask Drift to inspect what's already there:
 
     ```drift
@@ -183,19 +210,29 @@ You don't have to start over. Just describe the next thing you want.
     /ps
     ```
 
-    This helps Drift make more targeted changes and avoids unnecessary rebuilds.
+    This helps Drift make targeted changes and avoids unnecessary rebuilds.
   </Accordion>
 
-  <Accordion title="Debug by asking, not by guessing">
+  <Accordion title="Debug by describing, not by guessing">
     When something breaks, describe the symptom directly:
 
     ```drift
     why isn't my camera publishing images?
     what went wrong with the last build?
-    my robot arm isn't moving- what's wrong?
+    the robot arm isn't moving — what's wrong?
     ```
 
-    Drift checks your ROS2 topics, logs, URDF config, and process state to give you a diagnosis.
+    Drift checks topics, logs, URDF / MJCF config, and process state to give you a diagnosis.
+  </Accordion>
+
+  <Accordion title="Hand your team's knowledge to the agent with /skill">
+    If your team has a specific way of tuning SLAM, calibrating an IMU, or writing a Gazebo plugin, write it down as a markdown file and:
+
+    ```drift
+    /skill add ./team-docs/ekf-tuning.md
+    ```
+
+    Drift will use that skill from then on. See [Custom Skills](/guides/skills) for the full pattern.
   </Accordion>
 </AccordionGroup>
 
@@ -204,25 +241,35 @@ You don't have to start over. Just describe the next thing you want.
 | Command | What it does |
 |---------|-------------|
 | `/help` | Show all commands and examples |
+| `/init` | Generate a starter `DRIFT.md` for the current workspace |
+| `/skill add <path>` / `/skill list` / `/skill remove <name>` | Manage custom skills |
 | `/ps` | Show running background processes |
 | `/version` | Check your Drift CLI version |
 | `/update` | Update to the latest version |
+| `/login` / `/logout` / `/profile` | Manage your Drift account |
 | `/clear` | Clear the terminal |
 | `/exit` | Exit Drift CLI |
 
 ## What's next?
 
 <CardGroup cols={2}>
+  <Card title="Robot Showcase" icon="paw" href="/showcase/quadruped-go2">
+    Full walkthroughs with Unitree Go2, Aloha, and Unitree H1
+  </Card>
   <Card title="Your First Simulation" icon="play" href="/guides/first-simulation">
     A detailed walkthrough of building a complete simulation from scratch
   </Card>
-  <Card title="Commands Reference" icon="terminal" href="/reference/commands">
-    Full list of Drift CLI commands and slash commands
+  <Card title="Project Context" icon="brain" href="/guides/project-context">
+    The full DRIFT.md workflow
+  </Card>
+  <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
+    Hand your team's expertise to Drift
   </Card>
 </CardGroup>
 
 ## Getting help
 
-- **In Drift**: Type `/help` or ask `drift> how do I...`
-- **FAQ**: Check the [FAQ](/getting-started/faq) for common questions
+- **In Drift**: type `/help` or ask `drift> how do I...`
+- **FAQ**: [Frequently Asked Questions](/getting-started/faq)
 - **Bugs**: [Open an issue on GitHub](https://github.com/godrift-ai/drift-releases/issues)
+- **Discord**: [Join the community](https://discord.gg/GnZtVZHAW6)

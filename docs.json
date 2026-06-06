@@ -51,7 +51,18 @@
         "group": "Guides",
         "pages": [
           "guides/first-simulation",
-          "guides/manipulator-rviz"
+          "guides/manipulator-rviz",
+          "guides/mujoco-scene",
+          "guides/project-context",
+          "guides/skills"
+        ]
+      },
+      {
+        "group": "Robot Showcase",
+        "pages": [
+          "showcase/quadruped-go2",
+          "showcase/dual-arm-aloha",
+          "showcase/humanoid-h1"
         ]
       },
       {

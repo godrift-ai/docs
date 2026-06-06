@@ -9,25 +9,60 @@ description: "Common questions about Drift CLI"
 
 Yes. Drift's agent sends your prompts to an external API to generate plans and code. Your local files, workspace, and simulation data stay on your machine — only the text of your prompt is sent.
 
-If you're working in an air-gapped environment, Drift will not function. Offline support is not available in the current beta.
+If you're working in an air-gapped environment, Drift will not function. Offline support is not on the roadmap.
+
+### Does Drift support MuJoCo?
+
+Yes. Drift authors MJCF, runs headless or interactive simulations, and debugs MuJoCo-specific failure modes (NaN in `qacc`, chassis-z spawn issues, cylinder vs hinge axis mismatch, contact tuning). See [Building a MuJoCo Scene](/guides/mujoco-scene). Recommended version: MuJoCo 3.8.1+.
+
+### Does Drift support Gazebo Harmonic?
+
+Yes — Gazebo Harmonic is the recommended Gazebo version. Drift authors SDF worlds, configures standard plugins (cameras, LiDAR, IMU, etc.), and bridges topics through `ros_gz_bridge`. See [Your First Simulation](/guides/first-simulation).
 
 ### Does Drift work with MoveIt?
 
-Not directly. Drift creates the robot description (URDF), Gazebo world, and launch files, but does not currently configure MoveIt2 motion planning. You can use Drift to scaffold the robot and simulation, then set up MoveIt2 separately on top of the generated workspace.
+Not directly. Drift creates the robot description (URDF), Gazebo or MuJoCo world / scene, and launch files, but does not currently configure MoveIt2 motion planning. You can use Drift to scaffold the robot and simulation, then set up MoveIt2 separately on top of the generated workspace.
 
 MoveIt2 integration is on the roadmap.
 
-### Can I use my own URDF files?
+### Can I use my own URDF / MJCF files?
 
-You can reference your own URDF in prompts (e.g., "use my existing robot.urdf and add a camera sensor"). Drift will attempt to parse and extend it. However, highly customized or non-standard URDF structures may require manual adjustment. Drift works best when it generates URDF from scratch or when existing files follow standard ROS2 conventions.
+Yes. Reference your file in the prompt (e.g. *"use my existing robot.urdf and add a camera sensor"*). Drift will parse and extend it. Highly customized or non-standard files may require manual adjustment — Drift works best when files follow standard conventions or when it generates them from scratch.
 
 ### Can I use custom Gazebo plugins?
 
-Drift can configure standard Gazebo Harmonic plugins automatically (cameras, LiDAR, IMU, etc.). For third-party or custom `.so` plugins, mention them explicitly in your prompt — Drift will attempt to add the plugin block to the SDF. You may still need to manually verify the plugin parameters and build paths.
+Drift configures standard Gazebo Harmonic plugins automatically (cameras, LiDAR, IMU, etc.). For third-party or custom `.so` plugins, mention them explicitly in your prompt — Drift will add the plugin block to the SDF. You may need to manually verify plugin parameters and build paths.
 
 ### Does Drift work with ROS1?
 
 No. Drift supports ROS2 only. ROS1 is not on the roadmap.
+
+---
+
+## Project Context & Skills
+
+### What's `DRIFT.md` and why should I write one?
+
+`DRIFT.md` is a markdown file at your project root that captures the project's facts — robot specs, topic names, frame_ids, build conventions, naming rules, your team's quirks. Drift reads it before every prompt. You write it once, the agent stops asking.
+
+Run `/init` from the `drift>` prompt and Drift will scan your workspace and write a starter `DRIFT.md` for you. Edit it to taste. See [Project Context](/guides/project-context) for the full walkthrough.
+
+### Does Drift read `CLAUDE.md` too?
+
+Yes. `CLAUDE.md`, `AGENTS.md`, and `DRIFT.md` are all picked up. If you already keep a `CLAUDE.md` for Claude Code / Cursor, you don't need to migrate.
+
+### What's a "skill" in Drift?
+
+A markdown file that captures *how* your team does something — tuning an EKF, calibrating an IMU, writing a launch file, picking MJCF damping values. Drop it at `.claude/skills/<name>/SKILL.md` (per-workspace) or `~/.claude/skills/<name>/SKILL.md` (machine-wide), or run `/skill add <path>`. Drift uses it automatically on relevant prompts. See [Custom Skills](/guides/skills).
+
+### Where do skills live on disk?
+
+| Location | Scope |
+|---|---|
+| `<workspace>/.claude/skills/<name>/SKILL.md` | Only inside this workspace |
+| `~/.claude/skills/<name>/SKILL.md` | Every workspace on this machine |
+
+`/skill add <path>` copies your file to the right location for you.
 
 ---
 
@@ -39,9 +74,13 @@ No. Drift supports ROS2 only. ROS1 is not on the roadmap.
 
 ROS2 Foxy reached end-of-life in June 2023 and is not supported. It may work in some cases but is not tested and you won't get help for Foxy-specific issues.
 
+### What MuJoCo versions are supported?
+
+MuJoCo 3.8.1 and above. Install with `pip install mujoco`.
+
 ### Does Drift work on macOS or Windows?
 
-Not natively. Drift CLI requires Ubuntu 20.04+ (Debian-based Linux). macOS users can run Drift inside a Ubuntu virtual machine using VMware Fusion — see the [Quickstart](/getting-started/quickstart) for setup steps. Windows is not supported.
+Not natively. Drift CLI requires Ubuntu 20.04+ (Debian-based Linux). macOS users can run Drift inside a Ubuntu virtual machine using VMware Fusion — see the [Quickstart](/getting-started/quickstart). Windows is not supported.
 
 ### Does Drift work on Apple Silicon (M1/M2/M3)?
 
@@ -49,11 +88,11 @@ Yes, via VMware Fusion. When creating the VM, select an **x86_64 Ubuntu image** 
 
 ### Does Drift work on ARM (Raspberry Pi)?
 
-Not yet. Only x86_64 (amd64) is supported. Raspberry Pi and other ARM devices are not currently supported.
+Not yet. Only x86_64 (amd64) is supported.
 
 ### Can I use Drift in VS Code or Cursor?
 
-Yes. Drift CLI runs in any terminal, including the integrated terminal in VS Code or Cursor. Open the integrated terminal (View → Terminal or `` Ctrl+` ``) and run `drift` as you would in a system terminal. No additional setup is required.
+Yes. Drift CLI runs in any terminal, including the integrated terminal in VS Code or Cursor. Open the integrated terminal (View → Terminal or `` Ctrl+` ``) and run `drift` as you would in a system terminal. No additional setup.
 
 ---
 
@@ -61,7 +100,7 @@ Yes. Drift CLI runs in any terminal, including the integrated terminal in VS Cod
 
 ### What kinds of prompts work best?
 
-Specific, descriptive prompts work better than short, vague ones. Instead of:
+Specific, descriptive prompts work better than short ones. Instead of:
 
 ```drift
 make a robot
@@ -73,15 +112,15 @@ Try:
 create a 6-DOF manipulator arm with a two-finger gripper, a table workspace, and a camera mounted on the end-effector
 ```
 
-The more detail you provide about the robot type, sensors, world environment, and task, the better the output.
+The more detail about robot type, sensors, world environment, and task — the better the output.
 
 ### Can I use Drift with an existing ROS2 workspace?
 
-Drift is designed to create and manage workspaces it generates. Using it with a pre-existing workspace is possible (point Drift at the directory and describe what you want to modify), but results may vary depending on how the workspace is structured. This use case is not fully tested in the current beta.
+Yes. Point Drift at your workspace directory and describe what you want to modify. Results are best when the workspace follows standard ROS2 conventions. A `DRIFT.md` explaining your conventions makes a huge difference here — see [Project Context](/guides/project-context).
 
 ### What happens if a build fails?
 
-Drift catches build errors and attempts automatic recovery — checking for missing dependencies, fixing common `colcon` issues, and retrying. If the auto-fix fails, Drift will show you the error and suggest next steps. You can also ask:
+Drift catches build errors and attempts automatic recovery — checking for missing dependencies, fixing common `colcon` issues, retrying. If auto-fix fails, Drift will show you the error and suggest next steps. You can also ask:
 
 ```drift
 what went wrong with the last build?
@@ -89,13 +128,15 @@ what went wrong with the last build?
 
 ### How do I stop a running simulation?
 
-From the `drift>` prompt:
-
 ```drift
 /ps          # see running processes
 stop gazebo  # ask Drift to stop a specific process
 /exit        # exit Drift (stops managed processes)
 ```
+
+### Where can I see what each query cost?
+
+Per-query token and dollar tracking is on your account dashboard at [platform.godrift.ai](https://platform.godrift.ai/). You can also set per-workspace budgets there.
 
 ---
 
@@ -103,11 +144,14 @@ stop gazebo  # ask Drift to stop a specific process
 
 ### How do I get access?
 
-Drift CLI is in public beta. Run the following command to get started or refer the [Quickstart](/getting-started/quickstart).
+Drift CLI is in public beta. Run:
+
 ```bash
 curl -fsSL https://godrift.ai/install | bash
 ```
 
+Or follow the [Quickstart](/getting-started/quickstart).
+
 ### How do I report a bug?
 
-Open an issue on the [GitHub Releases repository](https://github.com/godrift-ai/docs/issues), or describe the problem at the `drift>` prompt — the agent can often diagnose issues directly.
+Open an issue on the [GitHub Releases repository](https://github.com/godrift-ai/drift-releases/issues), describe the problem in the [Discord community](https://discord.gg/GnZtVZHAW6), or just describe it at the `drift>` prompt — the agent can often diagnose live.

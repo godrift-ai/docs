@@ -172,6 +172,55 @@ Run these first to rule out the basics:
 
 ---
 
+## MuJoCo Issues
+
+<AccordionGroup>
+  <Accordion title='"No module named mujoco"'>
+    Install via pip:
+
+    ```bash
+    pip install mujoco
+    python3 -c "import mujoco; print(mujoco.__version__)"
+    ```
+
+    Recommended: 3.8.1+.
+  </Accordion>
+
+  <Accordion title="NaN in qacc — simulation diverging">
+    Common causes, in order of likelihood:
+
+    - **Missing inertial block** on a body. Every dynamic body needs `<inertial mass="..." diaginertia="..."/>`.
+    - **Mass too small** (under 0.01). Numerical errors dominate; bump it up.
+    - **Timestep too coarse.** Try `timestep="0.001"` with `integrator="implicitfast"`.
+    - **Free joint with no damping.** Add wheel / joint damping.
+    - **Wheel embedded in floor at spawn.** Raise chassis-z to at least the wheel radius.
+
+    Describe the symptom to Drift — it'll walk through this checklist for you.
+  </Accordion>
+
+  <Accordion title="Wheels spin but the robot doesn't move">
+    Almost always one of:
+
+    - **Cylinder axis ≠ hinge axis.** A wheel cylinder's symmetry axis must match the hinge. With `axis="0 1 0"` (rotation about Y), the cylinder's `fromto` must differ only in Y.
+    - **Friction set too low or `condim=1`.** `condim=1` is frictionless. Use `condim=3` for point friction, `condim=6` for full rolling friction.
+    - **Chassis-wheel embedding** — contact forces cancel.
+
+    Tell Drift `"the wheels spin but the robot doesn't move"` — it has a structured diagnostic for this exact failure.
+  </Accordion>
+
+  <Accordion title="Viewer won't open / no display">
+    The MuJoCo passive viewer needs an X display. From an SSH session without forwarding, or from a container without DISPLAY set:
+
+    ```bash
+    echo $DISPLAY  # should print :0 or similar
+    ```
+
+    For headless runs, use the scripted approach Drift defaults to — load the model in Python, step the sim, log to CSV. No viewer needed.
+  </Accordion>
+</AccordionGroup>
+
+---
+
 ## Planning Issues
 
 <AccordionGroup>
@@ -196,8 +245,8 @@ Run these first to rule out the basics:
     You have hit the usage limit. Wait a few minutes and try again, or check your account at [platform.godrift.ai](https://platform.godrift.ai).
   </Accordion>
 
-  <Accordion title="Too many steps (max 20)">
-    Drift limits execution to 20 steps per run. Break your goal into phases:
+  <Accordion title="Goal is too big and the planner is losing context">
+    Long, multi-objective goals work better split into phases. Instead of one mega-prompt, try:
 
     ```drift
     create the workspace and package structure
@@ -208,6 +257,8 @@ Run these first to rule out the basics:
     ```drift
     build and launch in Gazebo
     ```
+
+    A well-written `DRIFT.md` also helps a lot here — see [Project Context](/guides/project-context).
   </Accordion>
 </AccordionGroup>
 

@@ -1,0 +1,156 @@
+---
+title: "Building a MuJoCo Scene"
+description: "Author an MJCF scene, run a headless simulation, and inspect the result — all from prompts"
+---
+
+MuJoCo is great when you want a fast, scriptable, headless-friendly simulator: robotics research, contact-rich tasks, RL training, pure dynamics work. Drift treats MuJoCo as a first-class target — you describe what you want, Drift writes the MJCF, runs the sim, and reads the result back.
+
+<Info>
+  Make sure MuJoCo is installed (`pip install mujoco`) and you've completed the [Quickstart](/getting-started/quickstart) basics.
+</Info>
+
+## The prompt
+
+```drift
+build a 4-wheel mobile robot in MuJoCo with an IMU at chassis center,
+drop it in a 5×5m floor scene with three obstacle boxes, drive it
+forward for 5 seconds, and log IMU + chassis pose to a CSV
+```
+
+This guide uses a from-scratch mobile robot to walk through MJCF concepts step by step. If you want to use a famous open robot model instead, see the [Robot Showcase](/showcase/quadruped-go2) — every showcase guide composes the scene around a [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) model (Unitree Go2, Trossen Aloha, Unitree H1, …) rather than authoring the robot itself.
+
+From this single prompt, Drift:
+
+- Authors an MJCF scene with a chassis, 4 wheels (correct cylinder axis vs hinge axis), an IMU site, sensors, actuators, and the floor + obstacles
+- Picks chassis-z so the wheel bottoms rest exactly at z=0 (no spawn-bounce)
+- Picks damping / armature / friction values that won't oscillate when commands drop to zero
+- Validates the MJCF (loads the model, asserts `nbody`/`njnt`/`nu`/`nsensor`, checks for NaN in `qacc`)
+- Writes a `run_sim.py` headless loop with the requested controls and CSV logging
+- Runs the sim, prints the final chassis pose and contact count
+- (Optional) opens the MuJoCo passive viewer afterwards
+
+## What you get on disk
+
+After the prompt completes, your workspace looks like:
+
+```
+your-project/
+├── robot_scene.xml      # the full MJCF scene
+├── run_sim.py           # headless 5-second sim + CSV logger
+├── sensor_log.csv       # IMU accel + chassis pose at 100 Hz
+└── DRIFT.md             # if you ran /init or asked Drift to write notes
+```
+
+Open `robot_scene.xml` and you'll find the MJCF clean and well-named:
+
+```xml
+<mujoco model="mobile_robot">
+  <option timestep="0.001" integrator="implicitfast"/>
+  <worldbody>
+    <geom name="floor" type="plane" size="5 5 0.1"/>
+    <body name="chassis" pos="0 0 0.09">
+      <freejoint/>
+      <inertial mass="3.0" pos="0 0 0" diaginertia="..."/>
+      <geom type="box" size="0.15 0.10 0.04"/>
+      <site name="imu_site" pos="0 0 0"/>
+      <body name="front_left_wheel" pos="0.12 0.12 -0.04">
+        <joint name="front_left_wheel_joint" type="hinge" axis="0 1 0"
+               damping="0.05" armature="0.005"/>
+        <geom type="cylinder" fromto="0 -0.02 0 0 0.02 0" size="0.05"/>
+      </body>
+      <!-- ... -->
+    </body>
+  </worldbody>
+  <actuator>
+    <velocity name="front_left_wheel_vel" joint="front_left_wheel_joint"
+              kv="10" ctrlrange="-5 5"/>
+    <!-- ... -->
+  </actuator>
+  <sensor>
+    <accelerometer name="imu_accel" site="imu_site"/>
+    <gyro name="imu_gyro" site="imu_site"/>
+  </sensor>
+</mujoco>
+```
+
+Everything is named — no `joint1`, `body3`, `geom_2`. Real names you can grep.
+
+## Iterating on the scene
+
+Each follow-up triggers only what's needed:
+
+```drift
+add three obstacle boxes at (1.5, 0, 0.1), (-1, 1.2, 0.1), (0.5, -1.8, 0.1)
+change the wheel friction to 1.5 and re-run the sim
+swap the velocity servos on the wheels for direct torque motors
+add a wrist force/torque sensor to the end of the arm link
+```
+
+Drift edits the MJCF, re-validates, and re-runs the sim — no manual XML editing, no terminal switching.
+
+## Opening the viewer
+
+For interactive inspection:
+
+```drift
+open the scene in the MuJoCo viewer
+```
+
+Drift launches a background MuJoCo passive viewer. Use `/ps` to see it running. Press `q` in the viewer window (or `/exit` in Drift) when you're done — Drift cleans up the process.
+
+## Debugging common MuJoCo failures
+
+Describe the symptom, Drift figures it out:
+
+```drift
+the chassis falls through the floor on spawn
+```
+→ Drift checks the chassis-z spawn vs wheel radius and updates the position.
+
+```drift
+qacc has NaN after a few steps — what's wrong?
+```
+→ Drift walks: missing inertial blocks, too-coarse timestep, free joint without damping, near-zero mass.
+
+```drift
+the wheels spin but the robot doesn't move
+```
+→ Drift checks: cylinder axis vs hinge axis (mismatch = no traction), friction values, contact dimensions (`condim=1` is frictionless; need `condim=3` or `6`), chassis-wheel embedding.
+
+```drift
+the chassis oscillates when the velocity command drops to zero
+```
+→ Drift tunes wheel `damping`/`armature` until the stop is clean.
+
+## Cost-tracking note
+
+Long multi-step builds (write MJCF → validate → fix → run → tune → repeat) are exactly what Drift's caching and planning are optimized for. The agent keeps context across steps, so you're paying input cost on incremental changes — not the full prompt re-paid on every call.
+
+## Mixing MuJoCo and ROS2
+
+You can use MuJoCo without ROS2 in the loop — most users do. But if you want a ROS2 bridge for `cmd_vel` / odometry / sensor topics, Drift can scaffold that:
+
+```drift
+add a ROS2 bridge that subscribes to /cmd_vel and writes the message to
+the wheel velocity actuators in this MuJoCo scene, publishes IMU on
+/imu/data and chassis pose on /odom
+```
+
+This produces a Python ROS2 node that loads the MJCF, exposes a tick callback, and bridges the sensors and actuators to standard topic types. You can then `ros2 launch` it like any other node.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Your First Simulation (Gazebo)" icon="play" href="/guides/first-simulation">
+    The Gazebo / ROS2-first path for comparison
+  </Card>
+  <Card title="Manipulator in RViz" icon="robot" href="/guides/manipulator-rviz">
+    A single-prompt build of a 3-joint manipulator
+  </Card>
+  <Card title="Project Context" icon="brain" href="/guides/project-context">
+    Capture MuJoCo conventions for your team in DRIFT.md
+  </Card>
+  <Card title="Custom Skills" icon="puzzle-piece" href="/guides/skills">
+    Write your team's MJCF practices as a skill
+  </Card>
+</CardGroup>
