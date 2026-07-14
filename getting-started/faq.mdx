@@ -53,7 +53,7 @@ Yes. `CLAUDE.md`, `AGENTS.md`, and `DRIFT.md` are all picked up. If you already 
 
 ### What's a "skill" in Drift?
 
-A markdown file that captures *how* your team does something — tuning an EKF, calibrating an IMU, writing a launch file, picking MJCF damping values. Run `/skill add <path>` and Drift installs it to `.drift/skills/<name>/SKILL.md`, then uses it automatically on relevant prompts. See [Custom Skills](/guides/skills).
+A markdown file that captures *how* your team does something — tuning an EKF, calibrating an IMU, writing a launch file, picking MJCF damping values. Run `/skill add <path>` (or just say `add this skill: <path>`) and Drift installs it to `.drift/skills/<name>/SKILL.md`, then uses it automatically on relevant prompts. See [Custom Skills](/guides/skills).
 
 ### Where do skills live on disk?
 
@@ -62,7 +62,7 @@ A markdown file that captures *how* your team does something — tuning an EKF, 
 | `~/.drift/skills/<name>/SKILL.md` | Every workspace on this machine |
 | `<repo>/.drift/skills/<name>/SKILL.md` | Only inside this repository |
 
-`/skill add <path>` copies your file to the right location for you — use `--repo` to install it into the project instead of your home directory.
+`/skill add <path>` — or the plain-English `add this skill: <path>` — copies your file to the right location for you. Use `--repo` to install it into the project instead of your home directory.
 
 <Note>
   Skills are **opt-in**. Drift only loads skills you explicitly added, and it reads them from `.drift/skills/` only. If you keep skills in `.claude/skills/` for Claude Code or Cursor, Drift does **not** pick those up automatically — import one with `/skill add ~/.claude/skills/<name>/SKILL.md`, which copies it into `.drift/skills/`.

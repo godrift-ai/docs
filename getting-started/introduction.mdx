@@ -62,7 +62,7 @@ Run `/init` and Drift will scan your workspace and write a starter `DRIFT.md` fo
 ### Your own skills, written by your team
 A skill is a markdown file describing how *your team* tunes EKFs, calibrates IMUs, writes Gazebo plugins, names ROS2 packages, structures a launch hierarchy.
 
-Add one with `/skill add ./team-skills/ekf-tuning.md`. Drift installs it to `~/.drift/skills/<name>/SKILL.md` and uses it automatically from the next prompt onward — add `--repo` to install it into `<repo>/.drift/skills/` instead, so everyone who clones the project gets it. Your team's expertise becomes the agent's.
+Add one with `/skill add ./team-skills/ekf-tuning.md` — or just say `add this skill: ./team-skills/ekf-tuning.md` in plain English. Either way Drift installs it to `~/.drift/skills/<name>/SKILL.md` and uses it automatically from the next prompt onward. Add `--repo` to install it into `<repo>/.drift/skills/` instead, so everyone who clones the project gets it. Your team's expertise becomes the agent's.
 
 See [Custom Skills](/guides/skills) for the full layout.
 

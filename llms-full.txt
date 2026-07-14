@@ -140,7 +140,7 @@ Drift can scaffold the robot and simulation but does not configure Nav2 automati
 - **URDF/SDF generation**: Drift generates complete robot description files from scratch, including inertia tensors, collision geometry, and sensor plugins — not templates
 - **colcon workspace**: Drift creates and manages a standard ROS2 colcon workspace (`src/`, `build/`, `install/`, `log/`)
 - **Slash commands**: immediate commands — executed directly, not processed by the AI. The full set is `/help`, `/init`, `/skill add <path>` (plus `--repo`), `/skill list`, `/skill remove <name>`, `/ps` (or `/processes`), `/version`, `/update`, `/login`, `/logout`, `/profile`, `/clear`, `/exit` (or `/quit`)
-- **Skills**: user-authored `SKILL.md` files capturing team procedures. **Opt-in only** — Drift reads them from `.drift/skills/<name>/SKILL.md` (either `~/.drift/skills/` machine-wide or `<repo>/.drift/skills/` per project). `/skill add <path>` installs one; `--repo` installs it into the project. `.claude/skills/` is **not** scanned; a Claude Code skill has to be imported with `/skill add`
+- **Skills**: user-authored `SKILL.md` files capturing team procedures. **Opt-in only** — Drift reads them from `.drift/skills/<name>/SKILL.md` (either `~/.drift/skills/` machine-wide or `<repo>/.drift/skills/` per project). Install one with `/skill add <path>` or the plain-English `add this skill: <path>`; `--repo` installs it into the project. `.claude/skills/` is **not** scanned; a Claude Code skill has to be imported the same way
 - **Project context**: `DRIFT.md`, `CLAUDE.md`, and `AGENTS.md` at the workspace root **are** all read automatically. This is the opposite of skills — context files need no opt-in
 - **`drift -c "<prompt>"`**: non-interactive mode — runs a single prompt, auto-approves all steps, exits; for CI pipelines and scripts
 - **`drift init`**: scaffolds a new project directory structure before opening the interactive shell
@@ -272,7 +272,7 @@ Run `/init` and Drift will scan your workspace and write a starter `DRIFT.md` fo
 ### Your own skills, written by your team
 A skill is a markdown file describing how *your team* tunes EKFs, calibrates IMUs, writes Gazebo plugins, names ROS2 packages, structures a launch hierarchy.
 
-Add one with `/skill add ./team-skills/ekf-tuning.md`. Drift installs it to `~/.drift/skills/<name>/SKILL.md` and uses it automatically from the next prompt onward — add `--repo` to install it into `<repo>/.drift/skills/` instead, so everyone who clones the project gets it. Your team's expertise becomes the agent's.
+Add one with `/skill add ./team-skills/ekf-tuning.md` — or just say `add this skill: ./team-skills/ekf-tuning.md` in plain English. Either way Drift installs it to `~/.drift/skills/<name>/SKILL.md` and uses it automatically from the next prompt onward. Add `--repo` to install it into `<repo>/.drift/skills/` instead, so everyone who clones the project gets it. Your team's expertise becomes the agent's.
 
 See [Custom Skills](/guides/skills) for the full layout.
 
@@ -766,7 +766,7 @@ Yes. `CLAUDE.md`, `AGENTS.md`, and `DRIFT.md` are all picked up. If you already 
 
 ### What's a "skill" in Drift?
 
-A markdown file that captures *how* your team does something — tuning an EKF, calibrating an IMU, writing a launch file, picking MJCF damping values. Run `/skill add <path>` and Drift installs it to `.drift/skills/<name>/SKILL.md`, then uses it automatically on relevant prompts. See [Custom Skills](/guides/skills).
+A markdown file that captures *how* your team does something — tuning an EKF, calibrating an IMU, writing a launch file, picking MJCF damping values. Run `/skill add <path>` (or just say `add this skill: <path>`) and Drift installs it to `.drift/skills/<name>/SKILL.md`, then uses it automatically on relevant prompts. See [Custom Skills](/guides/skills).
 
 ### Where do skills live on disk?
 
@@ -775,7 +775,7 @@ A markdown file that captures *how* your team does something — tuning an EKF, 
 | `~/.drift/skills/<name>/SKILL.md` | Every workspace on this machine |
 | `<repo>/.drift/skills/<name>/SKILL.md` | Only inside this repository |
 
-`/skill add <path>` copies your file to the right location for you — use `--repo` to install it into the project instead of your home directory.
+`/skill add <path>` — or the plain-English `add this skill: <path>` — copies your file to the right location for you. Use `--repo` to install it into the project instead of your home directory.
 
   Skills are **opt-in**. Drift only loads skills you explicitly added, and it reads them from `.drift/skills/` only. If you keep skills in `.claude/skills/` for Claude Code or Cursor, Drift does **not** pick those up automatically — import one with `/skill add ~/.claude/skills/<name>/SKILL.md`, which copies it into `.drift/skills/`.
 
@@ -1999,6 +1999,8 @@ Drift CLI accepts two kinds of input: **natural language prompts** and **slash c
 | `/profile` | Show the signed-in account and usage info |
 | `/clear` | Clear the terminal screen |
 | `/exit` (or `/quit`) | Exit Drift CLI |
+
+  `/skill add` also works in plain English at the prompt — `add this skill: ./team-docs/ekf-tuning.md` does the same thing as `/skill add ./team-docs/ekf-tuning.md`.
 
 ## CLI Flags
 
