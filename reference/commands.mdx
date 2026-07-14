@@ -11,9 +11,10 @@ Drift CLI accepts two kinds of input: **natural language prompts** and **slash c
 |---------|-------------|
 | `/help` | Show comprehensive help with all commands and usage examples |
 | `/init` | Scan the current workspace and write a starter `DRIFT.md` so Drift remembers your project on every prompt |
-| `/skill add <path>` | Add a custom skill from a `.md` file. Drift will use it from the next prompt onward |
+| `/skill add <path>` | Add a custom skill from a `.md` file. Copies it to `~/.drift/skills/<name>/SKILL.md` (machine-wide) and uses it from the next prompt onward |
+| `/skill add <path> --repo` | Same, but installs into `<repo>/.drift/skills/<name>/SKILL.md` so anyone who clones the project picks it up |
 | `/skill list` | Show every skill currently active for this workspace |
-| `/skill remove <name>` | Drop a custom skill |
+| `/skill remove <name>` | Drop a custom skill. Only removes skills Drift installed under `.drift/skills/` |
 | `/ps` (or `/processes`) | Show all running background processes (ROS2 nodes, Gazebo, MuJoCo viewer, etc.) |
 | `/version` | Display the current Drift CLI version |
 | `/update` | Update Drift CLI to the latest available version |

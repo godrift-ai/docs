@@ -7,13 +7,27 @@ description: "Supported platforms, dependencies, and compatibility for Drift CLI
 
 | Requirement | Supported |
 |------------|-----------|
-| **Operating System** | Ubuntu 20.04+ (Debian-based distributions) |
+| **Operating System** | Ubuntu 22.04 (Jammy) or 24.04 (Noble) |
 | **Architecture** | x86_64 (amd64) |
-| **ROS Version** | ROS2 Humble (LTS) or Jazzy recommended; Foxy is EOL and unsupported |
+| **ROS Version** | ROS2 Humble (LTS) on 22.04, or Jazzy on 24.04. Foxy is EOL and unsupported |
 | **Simulators** | Gazebo Sim (Harmonic), MuJoCo 3.8.1+ |
 
+Ubuntu and ROS2 are paired — each ROS2 release targets exactly one Ubuntu LTS:
+
+| Ubuntu | ROS2 distribution | Status |
+|---|---|---|
+| 22.04 (Jammy) | Humble (LTS) | Recommended |
+| 24.04 (Noble) | Jazzy | Supported |
+| 20.04 (Focal) | *(none)* | No supported ROS2 distribution |
+
+<Warning>
+**Ubuntu 20.04 has no supported ROS2 distribution.** Humble requires 22.04 and Jazzy requires 24.04. The only ROS2 release that shipped for 20.04 was Foxy, which reached end-of-life in June 2023 and is not tested or supported.
+
+If you're on 20.04, the **MuJoCo workflow still works** — it doesn't need ROS2 in the loop. Every Gazebo/ROS2 path in these docs assumes 22.04 or 24.04.
+</Warning>
+
 <Note>
-ROS2 Foxy reached end-of-life in June 2023. It may work with Drift but is not tested or supported. Use Humble or Jazzy for a supported experience. Support for additional ROS distributions is on the roadmap.
+Support for additional ROS distributions is on the roadmap.
 </Note>
 
 ## Dependencies
