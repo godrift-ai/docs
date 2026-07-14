@@ -26,24 +26,22 @@ description: "Go from zero to a running robotics simulation in under 5 minutes"
   <Tab title="macOS">
     Drift's binary is Linux x86_64 only, so on macOS you run it inside Ubuntu. Three ways, in the order most people pick them:
 
-    **1. Virtual machine — [VMware Fusion](https://www.vmware.com/products/fusion.html) (best supported)**
+    **1. Virtual machine — [VMware Fusion](https://www.vmware.com/products/fusion.html)**
     1. Install VMware Fusion (free for personal use)
     2. Create a VM with **Ubuntu 22.04**, using an **x86_64** image
     3. Give it at least **8GB RAM** and **4 CPU cores** so the simulator runs smoothly
     4. Install ROS2 and Gazebo (and/or MuJoCo) inside the VM
     5. Run the Drift install below **inside the VM's terminal**
 
-    **2. Container** — run an `x86_64` Ubuntu container and install Drift inside it. Fine for MuJoCo and headless work; getting a simulator GUI out of a container on macOS is the awkward part.
+    **2. Container** — run an `x86_64` Ubuntu container and install Drift inside it. Good for MuJoCo and headless work.
 
-    **3. Remote dev box** — SSH or VS Code Remote into an x86_64 Ubuntu machine and run Drift there. This is the least friction if you already have one.
+    **3. Remote dev box** — SSH or VS Code Remote into an x86_64 Ubuntu machine and run Drift there. The least friction if you already have one.
+
+    All three are supported and tested. Pick whichever fits how you already work.
 
     <Note>
       On Apple Silicon (M1/M2/M3), pick an **x86_64 image** explicitly — VMware Fusion and most container runtimes default to ARM, and Drift's binary won't run on it. Native Apple Silicon is not supported.
     </Note>
-
-    <Info>
-      The VM path is the one we test. Containers and remote dev boxes work and people use them, but they aren't part of our test matrix — if you hit something odd there, tell us on [Discord](https://discord.gg/GnZtVZHAW6).
-    </Info>
   </Tab>
 </Tabs>
 
