@@ -101,7 +101,7 @@ warehouse_bot/
 └── ...
 ```
 
-`/skill add <path> --repo` installs into exactly this layout. If your team already keeps skills in `.claude/skills/` (Claude Code convention), Drift reads those too — see the compat note below.
+`/skill add <path> --repo` installs into exactly this layout.
 
 This is the right pattern for project-specific procedures.
 
@@ -121,9 +121,19 @@ Then in Drift:
 
 This is the right pattern for cross-project conventions (build flags, launch-file structure, naming rules).
 
-### Claude Code compat
+### Importing a Claude Code or Cursor skill
 
-If you already use Claude Code or Cursor and keep skills in `.claude/skills/<name>/SKILL.md`, Drift reads those too. Both `.drift/skills/` (the Drift-native location) and `.claude/skills/` (the Claude Code convention) are scanned in user-global (`~/.{drift,claude}/skills/`) and project (`<repoRoot>/.{drift,claude}/skills/`) scopes. You don't have to migrate; the agent will pick up whichever you have. `/skill add` always copies into `.drift/skills/` so the install path is unambiguous.
+Skills are **opt-in**: Drift loads only the skills you explicitly added, and it reads them from `.drift/skills/` only. A `.claude/skills/` directory is **not** scanned — your Claude Code skills are mostly not robotics, and Drift will not silently distill and upload them.
+
+Importing one is a one-liner. `/skill add` copies it into `.drift/skills/`, where Drift will read it:
+
+```drift
+/skill add ~/.claude/skills/ekf-tuning/SKILL.md
+```
+
+<Note>
+  Project *context* files behave differently from skills. `CLAUDE.md`, `AGENTS.md`, and `DRIFT.md` **are** all read automatically — see [Project Context](/guides/project-context). It's only `SKILL.md` files that must live under `.drift/skills/`.
+</Note>
 
 ## Examples of skills worth writing
 

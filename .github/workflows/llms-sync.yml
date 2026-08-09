@@ -1,0 +1,30 @@
+name: llms.txt sync
+
+# llms.txt and llms-full.txt are generated from docs.json. Before this check
+# they were hand-maintained and had drifted badly — llms-full.txt indexed 10 of
+# 17 pages, so the Showcase, the MuJoCo guide and the Skills guide were
+# invisible to the agents those files exist to serve. Adding a page to the
+# navigation without regenerating now fails CI instead of silently shipping.
+
+on:
+  pull_request:
+    paths:
+      - "docs.json"
+      - "llms-preamble.md"
+      - "scripts/build-llms.mjs"
+      - "**/*.mdx"
+      - "llms.txt"
+      - "llms-full.txt"
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check llms.txt / llms-full.txt are up to date
+        run: node scripts/build-llms.mjs --check

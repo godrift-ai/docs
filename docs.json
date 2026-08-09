@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Drift",
-  "description": "Drift is the AI copilot built for robotics development. Build, test, and debug ROS2 simulations in Gazebo through plain English prompts — no manual URDF editing, no hand-written launch files.",
+  "description": "Drift is the AI copilot built for robotics development. Build, test, and debug ROS2 simulations in Gazebo and MuJoCo through plain English prompts — no manual URDF editing, no hand-written launch files.",
   "theme": "mint",
   "logo": {
     "dark": "/assets/images/logo-dark.svg",
@@ -16,32 +16,24 @@
   "fonts": {
   "family": "JetBrains Mono"
  },
-  "topbarLinks": [
-    {
-      "name": "Website",
-      "url": "https://godrift.ai"
-    }
-  ],
-  "topbarCtaButton": {
-    "name": "Get Early Access",
-    "url": "https://godrift.ai"
-  },
-    "navbar": {
-      "primary": {
-        "type": "button",
-        "label": "Get Started",
-        "href": "https://platform.godrift.ai/"
-      },
-      "links": [
-        { "label": "Website", "href": "https://godrift.ai/" }
-      ]
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://docs.godrift.ai/getting-started/quickstart"
     },
+    "links": [
+      { "label": "Website", "href": "https://godrift.ai/" },
+      { "label": "Dashboard", "href": "https://platform.godrift.ai/" }
+    ]
+  },
   "navigation": {
     "groups": [
       {
         "group": "Getting Started",
         "pages": [
           "getting-started/introduction",
+          "getting-started/installation",
           "getting-started/quickstart",
           "getting-started/faq",
           "getting-started/support"
@@ -92,13 +84,13 @@
   "customCss": ["/style.css"],
   "metadata": {
     "og:title": "Drift — AI Copilot for Robotics Development",
-    "og:description": "Build, test, and debug ROS2 simulations in Gazebo through plain English prompts. Drift is the AI-native copilot purpose-built for robotics engineers, researchers, and students.",
+    "og:description": "Build, test, and debug ROS2 simulations in Gazebo and MuJoCo through plain English prompts. Drift is the AI-native copilot purpose-built for robotics engineers, researchers, and students.",
     "og:image": "https://docs.godrift.ai/assets/logo.jpg",
     "og:site_name": "Drift Docs",
     "og:type": "website",
     "twitter:card": "summary_large_image",
     "twitter:title": "Drift — AI Copilot for Robotics Development",
-    "twitter:description": "Build, test, and debug ROS2 simulations in Gazebo through plain English. Drift handles URDF, Gazebo, colcon, and ROS2 — you just describe what you want.",
-    "keywords": "robotics AI copilot, ROS2 assistant, Gazebo simulation tool, robotics development tool, AI robotics agent, ROS2 copilot, robotics simulation AI, autonomous robotics development"
+    "twitter:description": "Build, test, and debug ROS2 simulations in Gazebo and MuJoCo through plain English. Drift handles URDF, SDF, MJCF, colcon, and ROS2 — you just describe what you want.",
+    "keywords": "robotics AI copilot, ROS2 assistant, Gazebo simulation tool, MuJoCo simulation tool, MJCF generation, robotics development tool, AI robotics agent, ROS2 copilot, robotics simulation AI, autonomous robotics development"
   }
 }

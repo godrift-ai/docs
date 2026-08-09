@@ -9,26 +9,38 @@ description: "Go from zero to a running robotics simulation in under 5 minutes"
   <Tab title="Ubuntu (Native)">
     Running Ubuntu natively on an x86_64 machine is the recommended setup for best performance.
 
-    **Supported versions:**
-    - Ubuntu 20.04 (Focal)
-    - Ubuntu 22.04 (Jammy) — recommended
-    - Ubuntu 24.04 (Noble)
+    Pick your Ubuntu version to match the ROS2 distribution you want — each ROS2 release targets exactly one:
+
+    | Ubuntu | ROS2 distribution |
+    |---|---|
+    | 22.04 (Jammy) — recommended | Humble (LTS) |
+    | 24.04 (Noble) | Jazzy |
+
+    <Warning>
+      **Ubuntu 20.04 (Focal) has no supported ROS2 distribution.** Humble requires 22.04 and Jazzy requires 24.04; the only distro that shipped for 20.04 was Foxy, which is end-of-life and unsupported. The MuJoCo workflow doesn't need ROS2 and will still work on 20.04, but every Gazebo/ROS2 path in these docs assumes 22.04 or 24.04.
+    </Warning>
 
     Use your system terminal (GNOME Terminal, Konsole, any terminal emulator), or the integrated terminal in VS Code or Cursor.
   </Tab>
 
-  <Tab title="macOS (via VMware)">
-    Drift runs on Ubuntu only, but macOS users can run it inside a Ubuntu virtual machine using [VMware Fusion](https://www.vmware.com/products/fusion.html).
+  <Tab title="macOS">
+    Drift's binary is Linux x86_64 only, so on macOS you run it inside Ubuntu. Three ways, in the order most people pick them:
 
-    **Setup steps:**
-    1. Download and install [VMware Fusion](https://www.vmware.com/products/fusion.html) (free for personal use)
-    2. Create a new VM with **Ubuntu 22.04** (x86_64 image)
-    3. Allocate at least **8GB RAM** and **4 CPU cores** for the simulator to run smoothly
-    4. Install ROS2 and Gazebo (and/or MuJoCo) inside the VM following the official guides
-    5. Follow the Drift install steps below inside the VM terminal
+    **1. Virtual machine — [VMware Fusion](https://www.vmware.com/products/fusion.html)**
+    1. Install VMware Fusion (free for personal use)
+    2. Create a VM with **Ubuntu 22.04**, using an **x86_64** image
+    3. Give it at least **8GB RAM** and **4 CPU cores** so the simulator runs smoothly
+    4. Install ROS2 and Gazebo (and/or MuJoCo) inside the VM
+    5. Run the Drift install below **inside the VM's terminal**
+
+    **2. Container** — run an `x86_64` Ubuntu container and install Drift inside it. Good for MuJoCo and headless work.
+
+    **3. Remote dev box** — SSH or VS Code Remote into an x86_64 Ubuntu machine and run Drift there. The least friction if you already have one.
+
+    All three are supported and tested. Pick whichever fits how you already work.
 
     <Note>
-      On Apple Silicon (M1/M2/M3), VMware Fusion runs an ARM Ubuntu image by default. Select an **x86_64 Ubuntu image** when creating the VM so Drift's binary is compatible.
+      On Apple Silicon (M1/M2/M3), pick an **x86_64 image** explicitly — VMware Fusion and most container runtimes default to ARM, and Drift's binary won't run on it. Native Apple Silicon is not supported.
     </Note>
   </Tab>
 </Tabs>
@@ -68,7 +80,17 @@ cd your-project
 drift
 ```
 
-You'll see the welcome screen with an interactive prompt:
+## Step 3: Sign in with Google
+
+The first time you run Drift, it prints a Google Sign-In URL. **Signing in is required** — Drift won't take a prompt until you do.
+
+1. Open the URL Drift printed in your browser
+2. Complete Google Sign-In
+3. Drift detects it automatically and drops you at the prompt
+
+Drift waits up to 5 minutes for you to finish. If the link doesn't open, copy the whole URL into your browser by hand.
+
+Once you're in, you'll see the interactive prompt:
 
 ```
 🚀 Welcome to Drift CLI
@@ -78,9 +100,11 @@ You'll see the welcome screen with an interactive prompt:
 drift>
 ```
 
-First time launching from a fresh directory, Drift will nudge you to run `/init` — that's the project-context bootstrap (see Step 3).
+You can check who you're signed in as at any time with `/profile`, and sign in again later with `/login`. If you ever see **"Authentication required"**, your session has expired — run `/login`. See [Troubleshooting](/reference/troubleshooting) if the login flow gives you trouble.
 
-## Step 3: Give Drift project context with `/init`
+First time launching from a fresh directory, Drift will nudge you to run `/init` — that's the project-context bootstrap (see Step 4).
+
+## Step 4: Give Drift project context with `/init`
 
 The single most useful thing you can do before your first real prompt:
 
@@ -100,7 +124,7 @@ Open it, edit it to taste — add topic names, frame_id conventions, special bui
   Already have a `CLAUDE.md` from Cursor / Claude Code? Drift reads that too — no migration needed.
 </Tip>
 
-## Step 4: Set up your simulator
+## Step 5: Set up your simulator
 
 Pick what you need:
 
@@ -136,7 +160,7 @@ Pick what you need:
   </Tab>
 </Tabs>
 
-## Step 5: Build your first simulation
+## Step 6: Build your first simulation
 
 At the `drift>` prompt, describe what you want in plain English:
 
@@ -160,7 +184,7 @@ At the `drift>` prompt, describe what you want in plain English:
 
 Drift plans and executes each step, printing progress as it goes. If a build step fails, Drift diagnoses the error and retries before surfacing it to you.
 
-## Step 6: Launch and iterate
+## Step 7: Launch and iterate
 
 Launch the simulation (Gazebo path):
 
