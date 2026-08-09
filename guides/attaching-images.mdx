@@ -1,0 +1,44 @@
+---
+title: "Attaching Reference Images"
+description: "Give Drift a photo, screenshot, or datasheet page and it will use the image to inform scene generation, robot layout, and design decisions"
+---
+
+Drift can look at an image you provide and use what it sees as context — the environment you want reproduced in simulation, the robot layout in a photo, dimensions labeled on a datasheet page. You attach the image once at the start of a prompt; Drift ingests it, then pulls exact labeled values on demand as it plans and builds.
+
+<Info>
+  Vision is on by default. There's nothing to install — just prepend the image path to your prompt.
+</Info>
+
+## How to attach
+
+Prepend the absolute path to the image, then write your prompt:
+
+```drift
+/home/you/Downloads/office.jpg build a MuJoCo world matching this room, then bring in the Metal Arm robot
+```
+
+```drift
+/home/you/robot-datasheet.png what's the joint 3 torque limit on this arm? use it in the URDF
+```
+
+Drift reads the image once, forms an inventory of what's in it, and keeps that inventory available for the rest of the session. Follow-up prompts can reference the image without re-attaching:
+
+```drift
+what colour were the cabinets in that reference image again?
+```
+
+## Supported formats
+
+`.png`, `.jpg` / `.jpeg`, `.gif`, `.webp`.
+
+<Info>
+  **`.avif` is not supported.** If you have a `.avif` (Chrome's default screenshot format on some systems), convert first:
+
+  ```bash
+  ffmpeg -i input.avif output.png
+  ```
+</Info>
+
+## Session lifetime
+
+The image stays available across turns for the current session only. Starting a new `drift` session resets — re-attach if you want the image back in context.
