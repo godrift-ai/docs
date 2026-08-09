@@ -1,0 +1,51 @@
+---
+title: "PDFs and Web Pages"
+description: "Point Drift at a PDF or URL and it will read the document to answer questions, extract values, and use the content while building"
+---
+
+Drift can read PDFs (datasheets, spec docs, papers) and web pages (vendor pages, GitHub READMEs, tutorials) directly. Point it at a file or URL and it'll extract the parts relevant to your prompt — dimensions, part numbers, code snippets, protocol details — without you having to copy-paste.
+
+## PDFs
+
+Attach a PDF path (local or URL) the same way you'd reference a file, and ask a question:
+
+```drift
+/home/you/datasheets/dynamixel-xl430.pdf what's the stall torque and no-load speed for this actuator, and set it in the URDF
+```
+
+```drift
+read /home/you/papers/mpc-quadruped.pdf and summarize the cost function they use
+```
+
+Drift decides internally whether to answer from a focused read (fast, cheap) or a full read (thorough). You don't have to pick.
+
+<Info>
+  **Password-protected PDFs are supported.** If the PDF is encrypted, Drift decrypts it server-side before reading. No extra flags needed.
+</Info>
+
+## Web pages
+
+Give Drift a URL — Drift fetches the page, reads it, and answers:
+
+```drift
+https://github.com/google-deepmind/mujoco_menagerie/tree/main/unitree_go2 use this model in a mujoco scene with an IMU on the base
+```
+
+```drift
+what's the latest supported Python version for ROS 2 Jazzy? check the official docs
+```
+
+If you don't know the exact URL, ask Drift to search:
+
+```drift
+find a well-cited paper on differential-drive kinematics with wheel slip and use its formulation
+```
+
+## What's blocked
+
+For safety, Drift refuses to fetch:
+
+- Private IP ranges (`10.*`, `192.168.*`, `172.16-31.*`, `127.*`) and other internal-network targets
+- `file://` and other non-http(s) schemes
+
+Public URLs on the internet work; anything that would target your local network or filesystem won't.

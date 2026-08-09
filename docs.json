@@ -45,6 +45,9 @@
           "guides/first-simulation",
           "guides/manipulator-rviz",
           "guides/mujoco-scene",
+          "guides/robot-library",
+          "guides/attaching-images",
+          "guides/external-content",
           "guides/project-context",
           "guides/skills"
         ]

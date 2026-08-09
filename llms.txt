@@ -24,6 +24,9 @@ GitHub: https://github.com/godrift-ai/drift-releases
 - [Your First Simulation](https://docs.godrift.ai/guides/first-simulation): A complete walkthrough to build a pick-and-place robot simulation and launch on Gazebo from scratch with Drift
 - [Build manipulator arm in RViz](https://docs.godrift.ai/guides/manipulator-rviz): Build a manipulator arm simulation and inspect it live in RViz in one prompt
 - [Building a MuJoCo Scene](https://docs.godrift.ai/guides/mujoco-scene): Author an MJCF scene, run a headless simulation, and inspect the result — all from prompts
+- [Robot Library](https://docs.godrift.ai/guides/robot-library): Browse a curated library of 100+ robots, preview them in MuJoCo or RViz, and stage them into your workspace with /robots
+- [Attaching Reference Images](https://docs.godrift.ai/guides/attaching-images): Give Drift a photo, screenshot, or datasheet page and it will use the image to inform scene generation, robot layout, and design decisions
+- [PDFs and Web Pages](https://docs.godrift.ai/guides/external-content): Point Drift at a PDF or URL and it will read the document to answer questions, extract values, and use the content while building
 - [Project Context (DRIFT.md)](https://docs.godrift.ai/guides/project-context): Teach Drift your project once with a DRIFT.md so you stop re-explaining it on every command
 - [Custom Skills](https://docs.godrift.ai/guides/skills): Drop your team's procedures into a markdown file. Drift picks them up and uses them.
 
